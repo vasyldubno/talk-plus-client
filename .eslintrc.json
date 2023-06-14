@@ -1,0 +1,54 @@
+{
+	"extends": [
+		"next/core-web-vitals",
+		"airbnb",
+		"airbnb/hooks",
+		"eslint:recommended",
+		"prettier",
+		"plugin:prettier/recommended",
+		"plugin:@next/next/recommended",
+		"plugin:react/recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
+	"env": {
+		"browser": true,
+		"es6": true,
+		"jest": true,
+		"node": true
+	},
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint"],
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"rules": {
+		"prettier/prettier": ["error"],
+		"no-console": "off",
+		"import/prefer-default-export": "off",
+		"react/function-component-definition": "off",
+		"react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+		"import/extensions": [
+			"error",
+			{ "svg": "always", "css": "always", "scss": "always", "json": "always" }
+		],
+		"react/react-in-jsx-scope": "off",
+		"react/jsx-props-no-spreading": "off",
+		"import/no-extraneous-dependencies": "off",
+		"no-unused-vars": "off",
+		"react/jsx-no-useless-fragment": "off",
+		"import/no-unresolved": ["error", { "ignore": ["^@"] }],
+		"import/order": "off",
+		"react/require-default-props": "off",
+		"react/no-array-index-key": "off",
+		"lines-between-class-members": "off",
+		"@typescript-eslint/no-unused-vars": "off"
+	}
+}

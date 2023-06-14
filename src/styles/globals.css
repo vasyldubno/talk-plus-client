@@ -1,0 +1,103 @@
+/* stylelint-disable selector-class-pattern */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--color-purple: #a95ffa;
+	--color-purple-50: rgb(169 95 250 / 50%) '';
+	--color-gray: #aaa;
+	--color-gray-50: rgb(170 170 170 / 30%);
+	--color-dark-gray: #1f2121;
+	--color-middle-gray: #282e2d;
+	--color-subscriber-online: #9ceb9a;
+	--color-middle-green: #188f79;
+}
+
+.ReactCrop {
+	cursor: default !important;
+}
+
+.ReactCrop__crop-selection {
+	border: 0 solid #fff !important;
+	border-radius: 50%;
+	cursor: default !important;
+}
+
+.ReactCrop .ord-nw {
+	width: 20px !important;
+	height: 20px !important;
+	margin-top: 0 !important;
+	margin-left: 0 !important;
+	background-color: transparent !important;
+	border-top: 3px solid white !important;
+	border-right: 0 solid white !important;
+	border-bottom: 0 solid white !important;
+	border-left: 3px solid white !important;
+	cursor: pointer !important;
+}
+
+.ReactCrop .ord-sw {
+	width: 20px !important;
+	height: 20px !important;
+	margin-bottom: 0 !important;
+	margin-left: 0 !important;
+	background-color: transparent !important;
+	border-top: px solid white !important;
+	border-right: 0 solid white !important;
+	border-bottom: 3px solid white !important;
+	border-left: 3px solid white !important;
+	cursor: pointer !important;
+}
+
+.ReactCrop .ord-ne {
+	width: 20px !important;
+	height: 20px !important;
+	margin-top: 0 !important;
+	margin-right: 0 !important;
+	background-color: transparent !important;
+	border-top: 3px solid white !important;
+	border-right: 3px solid white !important;
+	border-bottom: 0 solid white !important;
+	border-left: 0 solid white !important;
+	cursor: pointer !important;
+}
+
+.ReactCrop .ord-se {
+	width: 20px !important;
+	height: 20px !important;
+	margin-right: 0 !important;
+	margin-bottom: 0 !important;
+	background-color: transparent !important;
+	border-top: 0 solid white !important;
+	border-right: 3px solid white !important;
+	border-bottom: 3px solid white !important;
+	border-left: 0 solid white !important;
+	cursor: pointer !important;
+}
+
+.ReactCrop__drag-handle::after {
+	width: 0 !important;
+	height: 0 !important;
+	border-top: 0 solid white !important;
+	border-right: 0 solid white !important;
+	border-bottom: 0 solid white !important;
+	border-left: 0 solid white !important;
+}
+
+.ReactModal__Overlay {
+	opacity: 0;
+	transition: opacity 300ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+	opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+	opacity: 0;
+}
+
+.chakra-modal__content-container {
+	align-items: center !important;
+}
