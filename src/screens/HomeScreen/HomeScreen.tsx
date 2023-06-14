@@ -29,7 +29,7 @@ export const HomeScreen: FC = observer(() => {
 	return (
 		<>
 			{isLoaded && !isLogged && (
-				<Box className="w-full bg-[var(--color-middle-green)] h-full">
+				<Box className="w-full bg-[var(--color-middle-green)] h-[100vh]">
 					<Box
 						className={clsx(
 							'mx-auto flex flex-col gap-5 justify-center max-w-[500px]',
