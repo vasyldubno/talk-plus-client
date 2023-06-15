@@ -7,6 +7,7 @@ import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import type { AppProps, NextWebVitalsMetric } from 'next/app'
+import { Head } from '@/components/Head/Head'
 import { ReactQueryConfig } from '@/config/reactQueryConfig'
 import { useStore } from '@/hooks/useStore'
 import { UserProvider } from '@/providers/UserProvider/UserProvider'
@@ -26,8 +27,10 @@ export default function App({ Component, pageProps }: AppProps) {
 				<UserProvider store={userStore}>
 					<main className={font.className}>
 						<ChakraProvider>
-							<Component {...pageProps} />
-							<ToastContainer />
+							<Head>
+								<Component {...pageProps} />
+								<ToastContainer />
+							</Head>
 						</ChakraProvider>
 					</main>
 				</UserProvider>

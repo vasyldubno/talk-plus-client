@@ -12,7 +12,7 @@ export const LoginScreen: FC = () => {
 			<Box className={`flex flex-col my-10 ${sm ? 'gap-0' : 'gap-2'}`}>
 				<Box className="flex justify-center items-center gap-1">
 					<Text
-						className={`font-medium flex ${sm ? 'text-xl' : 'text-4xl'}`}
+						className={`font-medium  ${sm ? 'text-xl' : 'text-4xl'}`}
 						as="h1"
 					>
 						Hello! Welcome back!

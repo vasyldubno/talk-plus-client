@@ -107,6 +107,7 @@ export const LoginForm: FC = observer(() => {
 					type="submit"
 					className="w-fit mt-5"
 					style={{ alignSelf: 'center' }}
+					aria-label="Login"
 				>
 					Login
 				</Button>

@@ -6,12 +6,12 @@
 :root {
 	--color-purple: #a95ffa;
 	--color-purple-50: rgb(169 95 250 / 50%) '';
-	--color-gray: #aaa;
+	--color-gray: #757575;
 	--color-gray-50: rgb(170 170 170 / 30%);
 	--color-dark-gray: #1f2121;
 	--color-middle-gray: #282e2d;
 	--color-subscriber-online: #9ceb9a;
-	--color-middle-green: #188f79;
+	--color-middle-green: #16836f;
 }
 
 .ReactCrop {
