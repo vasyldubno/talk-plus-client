@@ -56,6 +56,7 @@ export const FileInput: FC<FileInputProps> = ({
 	return (
 		<div className={clsx('relative', className)}>
 			<input
+				data-testid="file"
 				accept="image/*"
 				type="file"
 				style={{ display: 'none' }}

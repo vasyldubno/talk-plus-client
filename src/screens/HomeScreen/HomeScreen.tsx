@@ -32,11 +32,11 @@ export const HomeScreen: FC = observer(() => {
 				<Box className="min-h-screen bg-[var(--color-middle-green)]">
 					<Box
 						className={clsx(
-							'mx-auto flex flex-col gap-5 justify-center max-w-[500px]',
+							'mx-auto flex flex-col justify-center max-w-[500px]',
 							sm && 'p-3',
 						)}
 					>
-						<Box className={clsx('pt-5 pb-10', sm ? 'px-2' : 'px-16')}>
+						<Box className={clsx('pt-5 pb-16', sm ? 'px-2' : 'px-16')}>
 							{welcomeImages.map((imageSrc, index) => {
 								if (xs && index >= 2) {
 									return null
@@ -71,7 +71,7 @@ export const HomeScreen: FC = observer(() => {
 						</Box>
 						<Text
 							className={clsx(
-								'text-white font-bold text-center',
+								'text-white font-bold text-center mb-8',
 								xs ? 'text-3xl' : 'text-5xl',
 							)}
 						>
@@ -79,7 +79,7 @@ export const HomeScreen: FC = observer(() => {
 						</Text>
 						<Text
 							className={clsx(
-								'text-white pr-5 text-center',
+								'text-white pr-5 text-center mb-8',
 								xs ? 'text-base' : 'text-lg',
 							)}
 						>
@@ -87,7 +87,7 @@ export const HomeScreen: FC = observer(() => {
 							private texting
 						</Text>
 						<Button
-							className="font-normal hover:scale-105"
+							className="font-normal hover:scale-105 mb-2"
 							style={{ transition: 'all 0.5s' }}
 							onClick={() => router.push('/register')}
 						>
@@ -95,11 +95,13 @@ export const HomeScreen: FC = observer(() => {
 						</Button>
 						<Box
 							className={clsx(
-								'flex justify-center',
-								xs ? 'text-base flex-col gap-0' : 'text-lg flex-row gap-2',
+								'flex justify-center text-sm',
+								xs ? 'flex-col gap-0' : 'flex-row gap-2',
 							)}
 						>
-							<Text className="text-[var(--color-middle-gray)] text-center">
+							<Text
+								className={clsx('text-[var(--color-middle-gray)] text-center')}
+							>
 								Already have an account?
 							</Text>
 							<Link
