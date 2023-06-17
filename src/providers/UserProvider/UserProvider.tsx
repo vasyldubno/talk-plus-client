@@ -36,6 +36,7 @@ export const UserProvider: FC<{
 		}
 		fetch()
 	}, [store])
+	console.log(store)
 
 	return <UserContext.Provider value={store}>{children}</UserContext.Provider>
 })

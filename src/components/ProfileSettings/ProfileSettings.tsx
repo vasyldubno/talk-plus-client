@@ -41,7 +41,7 @@ export const ProfileSettings: FC = () => {
 	}
 
 	return (
-		<div>
+		<div className="h-screen">
 			<h1 className="font-bold text-4xl text-center my-10">Settings</h1>
 			<form
 				onSubmit={handleSubmit(onSubmit)}

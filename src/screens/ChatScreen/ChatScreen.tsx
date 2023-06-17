@@ -38,6 +38,7 @@ export const ChatScreen: FC = observer(() => {
 	const [searchValue, setSearchValue] = useState('')
 	const [users, setUsers] = useState<IChat[]>([])
 	const [isOpenLeftSide, setIsOpenLeftSide] = useState(true)
+	const [isOpenRightSide, setIsOpenRightSide] = useState(true)
 
 	const md = useMatchMedia('(max-width: 1024px)')
 
@@ -127,6 +128,12 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}, [searchValue])
 
+	useEffect(() => {
+		if (md) {
+			setIsOpenRightSide(false)
+		}
+	}, [md])
+
 	const { isLoading } = useQuery('all-chats', ChatService.getAllChats, {
 		enabled: !!userId,
 		onSuccess(data) {
@@ -139,12 +146,20 @@ export const ChatScreen: FC = observer(() => {
 		setIsAddGroup(true)
 		setSelectedChat(null)
 		setIsProfileSettings(false)
+		if (md) {
+			setIsOpenLeftSide(false)
+			setIsOpenRightSide(false)
+		}
 	}
 
 	const handleSettings = () => {
 		setIsProfileSettings(true)
 		setIsAddGroup(false)
 		setSelectedChat(null)
+		if (md) {
+			setIsOpenLeftSide(false)
+			setIsOpenRightSide(false)
+		}
 	}
 
 	const handleSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -208,12 +223,38 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}
 
+	console.log('isAddGroup', isAddGroup)
+	console.log('selectedChat', selectedChat)
+	console.log('isOpenLeftSide', isOpenLeftSide)
+	console.log('isOpenRightSide', isOpenRightSide)
+
 	return (
 		<>
 			{socketError && <p>{socketError}</p>}
 			{isLoading && <Loader />}
 			{isLogged && isLoaded && !socketError && (
 				<Box className="flex">
+					{isAddGroup &&
+						!selectedChat &&
+						!isOpenLeftSide &&
+						!isOpenRightSide && (
+							<Box className="bg-[var(--color-dark-gray)] w-screen">
+								<AddGroup
+									setChats={setChats}
+									setIsAddGroup={setIsAddGroup}
+									setSelectedChat={setSelectedChat}
+									socket={socket}
+								/>
+							</Box>
+						)}
+					{isProfileSettings &&
+						!selectedChat &&
+						!isOpenLeftSide &&
+						!isOpenRightSide && (
+							<Box className="bg-[var(--color-dark-gray)] w-screen">
+								<ProfileSettings />
+							</Box>
+						)}
 					<Box
 						className={clsx(
 							'border-r-[1px] border-black h-screen overflow-y-auto bg-[var(--color-middle-gray)] flex-shrink-0 lg:w-[300px]',
@@ -254,6 +295,7 @@ export const ChatScreen: FC = observer(() => {
 										onClick={() => {
 											setSelectedChat(chat)
 											setIsOpenLeftSide(false)
+											setIsOpenRightSide(true)
 										}}
 										conversation={conversations.find(
 											(conversation) => conversation.id === chat.id,
@@ -265,7 +307,7 @@ export const ChatScreen: FC = observer(() => {
 					<Box
 						className={clsx(
 							'w-full bg-[var(--color-dark-gray)]',
-							md && isOpenLeftSide ? 'hidden' : 'block',
+							isOpenRightSide ? 'block' : 'hidden',
 						)}
 					>
 						{isAddGroup && !selectedChat && (
@@ -281,11 +323,13 @@ export const ChatScreen: FC = observer(() => {
 							<Box className="flex flex-col pb-3 h-[100vh] w-full">
 								<ChatHeader
 									chat={selectedChat}
-									chats={chats}
 									setChats={setChats}
 									setSelectedChat={setSelectedChat}
 									setMessages={setConversations}
-									setIsOpenLeftSide={setIsOpenLeftSide}
+									onClickBack={() => {
+										setIsOpenLeftSide(true)
+										setIsOpenRightSide(false)
+									}}
 								/>
 								<ChatFeed
 									conversation={getCurrentConversation(

@@ -24,20 +24,18 @@ import { SearchInput } from '@/ui/SearchInput/SearchInput'
 
 interface ChatHeaderProps {
 	chat: IChat
-	chats: IChat[]
 	setChats: Dispatch<SetStateAction<IChat[]>>
 	setSelectedChat: Dispatch<SetStateAction<IChat | null>>
 	setMessages: Dispatch<SetStateAction<IConversation[]>>
-	setIsOpenLeftSide: Dispatch<SetStateAction<boolean>>
+	onClickBack: () => void
 }
 
 export const ChatHeader: FC<ChatHeaderProps> = ({
 	chat,
-	chats,
 	setChats,
 	setSelectedChat,
 	setMessages,
-	setIsOpenLeftSide,
+	onClickBack,
 }) => {
 	const [isAddNewUser, setIsAddNewUser] = useState(false)
 	const [users, setUsers] = useState<IUser[] | null>(null)
@@ -78,18 +76,11 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
 		return ChatService.deleteChat(chat.id)
 	}
 
-	const handleArrowLeft = () => {
-		setIsOpenLeftSide(true)
-	}
-
 	return (
 		<>
 			<Box className="flex p-3 items-center border-b-[1px] border-gray-400 top-0 relative justify-between mb-2 bg-[var(--color-middle-gray)]">
 				<Box className="flex items-center">
-					<Box
-						className="cursor-pointer lg:hidden mr-8"
-						onClick={handleArrowLeft}
-					>
+					<Box className="cursor-pointer lg:hidden mr-8" onClick={onClickBack}>
 						<ArrowLeftIcon size="2rem" />
 					</Box>
 					{chat.imageUrl ? (
