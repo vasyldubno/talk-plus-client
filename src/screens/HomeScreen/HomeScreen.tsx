@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
+import { Loader } from '@/ui/Loader/Loader'
 
 const welcomeImages = ['/welcome-1.jpg', '/welcome-2.jpg', '/welcome-3.jpg']
 
@@ -28,8 +29,9 @@ export const HomeScreen: FC = observer(() => {
 
 	return (
 		<>
+			{!isLoaded && <Loader />}
 			{isLoaded && !isLogged && (
-				<Box className="min-h-screen bg-[var(--color-middle-green)]">
+				<Box className="min-h-screen bg-[var(--color-middle-green)] py-3">
 					<Box
 						className={clsx(
 							'mx-auto flex flex-col justify-center max-w-[500px]',

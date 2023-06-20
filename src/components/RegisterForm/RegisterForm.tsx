@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AxiosError } from 'axios'
+import { signIn } from 'next-auth/react'
 import { FC, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
@@ -65,8 +66,15 @@ export const RegisterForm: FC = () => {
 				store.updateUserId(response.id.toString())
 				store.updateIsLogged(true)
 				store.updateIsLoaded(true)
-				store.updateAccessToken(response.accessToken)
-				return router.push('/chat')
+
+				const responseSignIn = await signIn('credentials', {
+					userId: response.id.toString(),
+					redirect: false,
+				})
+
+				if (responseSignIn?.ok) {
+					return router.push('/chat')
+				}
 			}
 			return null
 		},

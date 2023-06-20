@@ -1,3 +1,4 @@
+import { signOut } from 'next-auth/react'
 import { $axios, authTokenStore } from '@/config/axiosConfig'
 
 interface LoginDto {
@@ -31,6 +32,7 @@ export class AuthService {
 	}
 
 	static async logout() {
-		return $axios.get('/auth/logout')
+		authTokenStore.authToken = null
+		return signOut({ redirect: false })
 	}
 }

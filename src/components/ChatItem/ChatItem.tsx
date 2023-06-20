@@ -1,6 +1,6 @@
 import { Box, Image, Text } from '@chakra-ui/react'
 import clsx from 'clsx'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { useStore } from '@/hooks/useStore'
 import { IChat, IConversation } from '@/types/types'
 import { formatUTCDate } from '@/utils/formatUTCDate'
@@ -18,8 +18,6 @@ export const ChatItem: FC<ChatItemProps> = ({
 	selectedChat,
 	conversation,
 }) => {
-	const [updatedAt, setUpdatedAt] = useState<string | undefined>('')
-
 	const store = useStore()
 
 	const getLastMessage = () => {
@@ -29,18 +27,6 @@ export const ChatItem: FC<ChatItemProps> = ({
 	const isSelectedChat = () => {
 		return selectedChat === `${chat.id}-${chat.type}`
 	}
-
-	useEffect(() => {
-		if (chat && store) {
-			setUpdatedAt(formatUTCDate(chat.updatedAt, store))
-		}
-	}, [chat, store])
-
-	useEffect(() => {
-		if (conversation?.messages.length) {
-			setUpdatedAt(formatUTCDate(conversation?.messages[0].updatedAt, store))
-		}
-	}, [conversation?.messages, store])
 
 	return (
 		<Box
@@ -60,7 +46,9 @@ export const ChatItem: FC<ChatItemProps> = ({
 			<Box className="pr-2 flex flex-col justify-center w-[calc(100%-80px)]">
 				<Box className="flex justify-between">
 					<Text className="text-white">{chat.title}</Text>
-					<Text className="text-sm text-white">{updatedAt}</Text>
+					<Text className="text-sm text-white">
+						{formatUTCDate(getLastMessage()?.updatedAt, store)}
+					</Text>
 				</Box>
 				{getLastMessage() && (
 					<Text

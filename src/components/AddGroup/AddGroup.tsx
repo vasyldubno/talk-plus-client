@@ -12,6 +12,7 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useStore } from '@/hooks/useStore'
+import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
 import { ChatService } from '@/services/chatService'
 import { IChat, ISocket } from '@/types/types'
 import { FileInput } from '@/ui/FileInput/FileInput'
@@ -22,10 +23,11 @@ interface AddGroupProps {
 	setIsAddGroup: Dispatch<SetStateAction<boolean>>
 	setSelectedChat: Dispatch<SetStateAction<IChat | null>>
 	socket: ISocket | null
+	onClose?: () => void
 }
 
 export const AddGroup: FC<AddGroupProps> = observer(
-	({ setChats, setIsAddGroup, setSelectedChat, socket }) => {
+	({ setChats, setIsAddGroup, setSelectedChat, socket, onClose }) => {
 		const store = useStore()
 		const userId = store.getUserId()
 
@@ -51,35 +53,42 @@ export const AddGroup: FC<AddGroupProps> = observer(
 
 		const onSubmit: SubmitHandler<FormSchema> = async (data) => {
 			setIsLoading(true)
-			const response = await ChatService.addGroup(
-				data.title,
-				imageBase64,
-				userId,
-			)
-			if (response) {
-				const newChat: IChat = {
-					id: response.data.id,
-					imageUrl: imageBase64,
-					title: data.title,
-					isAdmin: true,
-					type: 'group',
-				}
 
-				if (socket) {
-					socket.emit('join', { room: newChat.title, type: 'group' })
-				}
+			if (userId) {
+				const response = await ChatService.addGroup(
+					data.title,
+					imageBase64,
+					userId,
+				)
+				if (response) {
+					const newChat: IChat = {
+						id: response.data.id,
+						imageUrl: imageBase64,
+						title: data.title,
+						isAdmin: true,
+						type: 'group',
+					}
 
-				setChats((prev) => [newChat, ...prev])
-				setIsAddGroup(false)
-				setSelectedChat(newChat)
-				setIsLoading(false)
+					if (socket) {
+						socket.emit('join', { room: newChat.title, type: 'group' })
+					}
+
+					setChats((prev) => [newChat, ...prev])
+					setIsAddGroup(false)
+					setSelectedChat(newChat)
+					setIsLoading(false)
+				}
 			}
 		}
 
 		return (
 			<>
-				<Box className="bg-slate-400 py-4 justify-center">
-					<h1 className="text-center font-bold">New Group</h1>
+				<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between flex items-center">
+					<Box className="cursor-pointer lg:hidden" onClick={onClose}>
+						<ArrowLeftIcon size="2rem" />
+					</Box>
+					<h1 className="text-center font-bold text-white">New Group</h1>
+					<div />
 				</Box>
 				{isLoading ? (
 					<Loader />

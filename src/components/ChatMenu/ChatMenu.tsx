@@ -22,6 +22,7 @@ export const ChatMenu: FC<ChatMenuProps> = ({
 
 	const handleLogout = () => {
 		store.updateIsLogged(false)
+		store.updateUserId(null)
 		router.push('/')
 		AuthService.logout()
 	}

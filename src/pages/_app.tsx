@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import reportAccessibility from '../utils/reportAccessibility'
 import { ChakraProvider } from '@chakra-ui/react'
 import { Poppins } from '@next/font/google'
+import { SessionProvider } from 'next-auth/react'
 import React, { useState } from 'react'
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
 import { ToastContainer } from 'react-toastify'
@@ -22,20 +23,22 @@ export default function App({ Component, pageProps }: AppProps) {
 	const [queryClient] = useState(() => new QueryClient(ReactQueryConfig))
 
 	return (
-		<QueryClientProvider client={queryClient}>
-			<Hydrate state={pageProps.dehydratedState}>
-				<UserProvider store={userStore}>
-					<main className={font.className}>
-						<ChakraProvider>
-							<Head>
-								<Component {...pageProps} />
-								<ToastContainer />
-							</Head>
-						</ChakraProvider>
-					</main>
-				</UserProvider>
-			</Hydrate>
-		</QueryClientProvider>
+		<SessionProvider session={pageProps.session}>
+			<QueryClientProvider client={queryClient}>
+				<Hydrate state={pageProps.dehydratedState}>
+					<UserProvider store={userStore}>
+						<main className={font.className}>
+							<ChakraProvider>
+								<Head>
+									<Component {...pageProps} />
+									<ToastContainer />
+								</Head>
+							</ChakraProvider>
+						</main>
+					</UserProvider>
+				</Hydrate>
+			</QueryClientProvider>
+		</SessionProvider>
 	)
 }
 

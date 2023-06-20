@@ -8,6 +8,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AxiosError } from 'axios'
 import { observer } from 'mobx-react-lite'
+import { signIn } from 'next-auth/react'
 import { FC, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
@@ -47,11 +48,24 @@ export const LoginForm: FC = observer(() => {
 			const data = getValues()
 			const res = await AuthService.login(data)
 			if (res) {
-				store.updateUserId(res.id.toString())
-				store.updateIsLogged(true)
-				store.updateIsLoaded(true)
-				store.updateAccessToken(res.accessToken)
-				return router.push('/chat')
+				const responseSignIn = await signIn('credentials', {
+					userId: res.id.toString(),
+					accessToken: res.accessToken,
+					redirect: false,
+				})
+
+				if (responseSignIn?.ok) {
+					store.updateUserId(res.id.toString())
+					store.updateIsLogged(true)
+					store.updateIsLoaded(true)
+					store.updateAccessToken(res.accessToken)
+					return router.push('/chat')
+				}
+
+				if (responseSignIn?.error) {
+					store.updateIsLogged(false)
+					store.updateIsLoaded(true)
+				}
 			}
 			return null
 		},

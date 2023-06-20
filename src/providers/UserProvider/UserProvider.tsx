@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { observer } from 'mobx-react-lite'
-import { FC, ReactNode, useEffect } from 'react'
+import { getToken } from 'next-auth/jwt'
+import { useSession } from 'next-auth/react'
+import { FC, ReactNode, useCallback, useEffect } from 'react'
 import { $axios, authTokenStore } from '@/config/axiosConfig'
 import { UserContext } from '@/context/userContext'
 import { UserStore } from '@/store/userStore'
@@ -9,34 +11,67 @@ export const UserProvider: FC<{
 	store: UserStore
 	children: ReactNode
 }> = observer(({ children, store }) => {
-	useEffect(() => {
-		const fetch = async () => {
-			try {
-				const {
-					data: { accessToken, id },
-				} = await $axios.get<{ accessToken: string; id: number }>(
-					'/auth/refresh',
-				)
-				if (accessToken) {
-					store.updateUserId(id.toString())
-					store.updateAccessToken(accessToken)
-					authTokenStore.authToken = accessToken
-					store.updateIsLogged(true)
-					store.updateIsLoaded(true)
-				}
+	const session = useSession()
 
-				const { data } = await axios.get<{ timezone: string }>(
-					'https://ipapi.co/json/',
-				)
-				store.updateTimezone(data.timezone)
-			} catch (error) {
-				store.updateIsLogged(false)
-				store.updateIsLoaded(true)
-			}
+	const refresh = useCallback(async () => {
+		const res = await $axios.get('/auth/refresh')
+
+		if (res && session.data) {
+			authTokenStore.authToken = res.data.accessToken
+			session.data.user.name = res.data.accessToken
 		}
-		fetch()
-	}, [store])
-	console.log(store)
+	}, [session.data])
+
+	const update = useCallback(async () => {
+		if (session.status === 'authenticated') {
+			const {
+				data: { timezone },
+			} = await axios.get('https://ipapi.co/json/')
+
+			store.updateTimezone(timezone)
+			store.updateIsLogged(true)
+			store.updateIsLoaded(true)
+			authTokenStore.authToken = session.data.user.name
+
+			if (session.data.user.id) {
+				store.updateUserId(session.data.user.id)
+			}
+
+			refresh()
+		}
+
+		if (session.status === 'unauthenticated') {
+			store.updateIsLogged(false)
+			store.updateIsLoaded(true)
+		}
+	}, [refresh, session.status, store, session.data])
+
+	useEffect(() => {
+		// if (session.status === 'authenticated') {
+		// 	store.updateIsLogged(true)
+		// 	store.updateIsLoaded(true)
+		// 	authTokenStore.authToken = session.data.user.name
+
+		// 	if (session.data.user.id) {
+		// 		store.updateUserId(session.data.user.id)
+		// 	}
+
+		// 	// $axios.get('/auth/refresh').then((res) => {
+		// 	// 	authTokenStore.authToken = res.data.accessToken
+		// 	// 	session.data.user.name = res.data.accessToken
+		// 	// })
+		// 	refresh()
+		// }
+
+		// if (session.status === 'unauthenticated') {
+		// 	store.updateIsLogged(false)
+		// 	store.updateIsLoaded(true)
+		// }
+		update()
+	}, [update])
+
+	console.log('Store', store)
+	console.log('Session', session)
 
 	return <UserContext.Provider value={store}>{children}</UserContext.Provider>
 })

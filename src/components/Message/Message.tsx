@@ -29,9 +29,9 @@ export const Message = observer(
 		return (
 			<Box
 				className={clsx(
-					'flex mx-2 gap-2',
+					'flex gap-2',
 					isAdmin() ? '' : 'ml-auto flex-row-reverse',
-					chatType === 'chat' ? 'w-[94%] md:w-[70%]' : 'w-[90%] lg:w-[100%]',
+					chatType === 'chat' ? 'w-full md:w-[70%]' : 'w-[90%] lg:w-[100%]',
 				)}
 				ref={ref}
 			>

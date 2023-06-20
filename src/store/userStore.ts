@@ -1,26 +1,19 @@
 import { makeAutoObservable } from 'mobx'
 
 export class UserStore {
-	private accessToken: string
 	private isLogged: boolean
 	private isLoaded: boolean
-	private userId: string
-	private timezone: string
+	private userId: string | null
+	private timezone: string | null
 	private onlineUsers: number[]
 
 	constructor() {
-		this.accessToken = ''
 		this.isLogged = false
 		this.isLoaded = false
-		this.userId = ''
-		this.timezone = ''
+		this.userId = null
+		this.timezone = null
 		this.onlineUsers = []
 		makeAutoObservable(this)
-	}
-
-	updateAccessToken(accessToken: string) {
-		this.accessToken = accessToken
-		return null
 	}
 
 	updateIsLogged(payload: boolean) {
@@ -33,7 +26,7 @@ export class UserStore {
 		return null
 	}
 
-	updateUserId(payload: string) {
+	updateUserId(payload: string | null) {
 		this.userId = payload
 		return null
 	}
@@ -46,10 +39,6 @@ export class UserStore {
 	updateOnlineUsers(payload: number[]) {
 		this.onlineUsers = payload
 		return null
-	}
-
-	getAccessToken() {
-		return this.accessToken
 	}
 
 	getIsLogged() {

@@ -14,6 +14,7 @@ import { ChatMenu } from '@/components/ChatMenu/ChatMenu'
 import { ChatSearchInput } from '@/components/ChatSearchInput/ChatSearchInput'
 import { ProfileSettings } from '@/components/ProfileSettings/ProfileSettings'
 import { UserChatItem } from '@/components/UserChatItem/UserChatItem'
+import { authTokenStore } from '@/config/axiosConfig'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
@@ -62,7 +63,7 @@ export const ChatScreen: FC = observer(() => {
 			const newSocket: ISocket = io(
 				`${process.env.NEXT_PUBLIC_SERVER_URL}/chat`,
 				{
-					extraHeaders: { authorization: `Bearer ${store.getAccessToken()}` },
+					extraHeaders: { authorization: `Bearer ${authTokenStore.authToken}` },
 					secure: true,
 				},
 			)
@@ -74,7 +75,9 @@ export const ChatScreen: FC = observer(() => {
 		if (socket) {
 			socketMessage(socket, setConversations)
 			socket.on('onlineUsers', (payload) => {
-				store.updateOnlineUsers(payload.onlineUsers)
+				store.updateOnlineUsers(
+					payload.onlineUsers.filter((onlineUser) => onlineUser !== null),
+				)
 			})
 		}
 	}, [socket, store])
@@ -134,13 +137,17 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}, [md])
 
-	const { isLoading } = useQuery('all-chats', ChatService.getAllChats, {
-		enabled: !!userId,
-		onSuccess(data) {
-			setChats(data.data.chats)
-			setChatsLoaded(true)
+	const { isLoading: isLoadingChats } = useQuery(
+		'all-chats',
+		ChatService.getAllChats,
+		{
+			enabled: !!userId,
+			onSuccess(data) {
+				setChats(data.data.chats)
+				setChatsLoaded(true)
+			},
 		},
-	})
+	)
 
 	const handleAddGroup = () => {
 		setIsAddGroup(true)
@@ -223,15 +230,10 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}
 
-	console.log('isAddGroup', isAddGroup)
-	console.log('selectedChat', selectedChat)
-	console.log('isOpenLeftSide', isOpenLeftSide)
-	console.log('isOpenRightSide', isOpenRightSide)
-
 	return (
 		<>
 			{socketError && <p>{socketError}</p>}
-			{isLoading && <Loader />}
+			{/* {isLoading && <Loader />} */}
 			{isLogged && isLoaded && !socketError && (
 				<Box className="flex">
 					{isAddGroup &&
@@ -244,6 +246,10 @@ export const ChatScreen: FC = observer(() => {
 									setIsAddGroup={setIsAddGroup}
 									setSelectedChat={setSelectedChat}
 									socket={socket}
+									onClose={() => {
+										setIsOpenLeftSide(true)
+										setIsOpenRightSide(false)
+									}}
 								/>
 							</Box>
 						)}
@@ -252,7 +258,12 @@ export const ChatScreen: FC = observer(() => {
 						!isOpenLeftSide &&
 						!isOpenRightSide && (
 							<Box className="bg-[var(--color-dark-gray)] w-screen">
-								<ProfileSettings />
+								<ProfileSettings
+									onClose={() => {
+										setIsOpenLeftSide(true)
+										setIsOpenRightSide(false)
+									}}
+								/>
 							</Box>
 						)}
 					<Box
@@ -285,23 +296,28 @@ export const ChatScreen: FC = observer(() => {
 								))}
 						</Box>
 						<Box className="p-2">
-							{chats &&
-								!searchValue &&
-								chats.map((chat) => (
-									<ChatItem
-										key={`${chat.id}-${chat.type}`}
-										chat={chat}
-										selectedChat={`${selectedChat?.id}-${selectedChat?.type}`}
-										onClick={() => {
-											setSelectedChat(chat)
-											setIsOpenLeftSide(false)
-											setIsOpenRightSide(true)
-										}}
-										conversation={conversations.find(
-											(conversation) => conversation.id === chat.id,
-										)}
-									/>
-								))}
+							{isLoadingChats ? (
+								<p className="text-white font-bold text-center">Updating...</p>
+							) : (
+								<>
+									{!searchValue &&
+										chats.map((chat) => (
+											<ChatItem
+												key={`${chat.id}-${chat.type}`}
+												chat={chat}
+												selectedChat={`${selectedChat?.id}-${selectedChat?.type}`}
+												onClick={() => {
+													setSelectedChat(chat)
+													setIsOpenLeftSide(false)
+													setIsOpenRightSide(true)
+												}}
+												conversation={conversations.find(
+													(conversation) => conversation.id === chat.id,
+												)}
+											/>
+										))}
+								</>
+							)}
 						</Box>
 					</Box>
 					<Box

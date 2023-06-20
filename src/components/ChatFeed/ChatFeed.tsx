@@ -92,7 +92,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 		return (
 			<>
 				<Box
-					className="flex flex-col-reverse gap-3 overflow-y-auto scroll-smooth mt-auto mx-auto w-full overflow-x-hidden lg:px-32"
+					className="flex flex-col-reverse gap-3 overflow-y-auto scroll-smooth mt-auto mx-auto w-full overflow-x-hidden lg:px-32 px-3"
 					ref={chatFeedRef}
 					key={selectedChat?.id}
 				>
