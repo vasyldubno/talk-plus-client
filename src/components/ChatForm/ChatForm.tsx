@@ -35,7 +35,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 	const userId = store.getUserId()
 
 	const handleClick = () => {
-		if (socket) {
+		if (socket && userId) {
 			const response = socket.emit('message', {
 				message: value,
 				room,
