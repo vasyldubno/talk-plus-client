@@ -36,17 +36,18 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 			})
 		}
 
-		const { data, fetchNextPage } = useInfiniteQuery(
-			['messages', selectedChat?.id],
-			({ pageParam = 1 }) => getMessages(pageParam),
-			{
-				getNextPageParam: (_lastPage, pages) => {
-					return pages[pages.length - 1].length < PAGE_SIZE
-						? undefined
-						: pages.length + 1
+		const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+			useInfiniteQuery(
+				['messages', selectedChat?.id],
+				({ pageParam = 1 }) => getMessages(pageParam),
+				{
+					getNextPageParam: (_lastPage, pages) => {
+						return pages[pages.length - 1].length < PAGE_SIZE
+							? undefined
+							: pages.length + 1
+					},
 				},
-			},
-		)
+			)
 
 		const updateMessages = useCallback(() => {
 			setConversations((prev) => {
@@ -116,6 +117,9 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 								/>
 							)
 						})}
+					{isFetchingNextPage && (
+						<p className="text-white text-center">Loading...</p>
+					)}
 				</Box>
 			</>
 		)

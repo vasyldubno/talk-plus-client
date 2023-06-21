@@ -47,7 +47,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 
 	return (
 		<div className="h-screen">
-			<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between flex items-center mb-5">
+			<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between flex items-center">
 				<Box className="cursor-pointer lg:hidden" onClick={onClose}>
 					<ArrowLeftIcon size="2rem" />
 				</Box>
@@ -56,7 +56,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 			</Box>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="h-[100%] max-w-[50vw] mx-auto my-0 text-center"
+				className="px-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10"
 			>
 				<Controller
 					control={control}
@@ -67,17 +67,21 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 							error={error}
 							imageBase64={imageBase64}
 							setImageBase64={setImageBase64}
-							className="flex justify-center mb-5"
+							className="flex justify-center"
 							heigth="h-52"
 							width="w-52"
 						/>
 					)}
 				/>
 				<FormControl>
-					<FormLabel>Username</FormLabel>
+					<FormLabel className="text-white">Username</FormLabel>
 					<Input {...register('userName')} className="text-white" />
 				</FormControl>
-				<Button type="submit" className="mt-5" onClick={handleSaveChanges}>
+				<Button
+					type="submit"
+					className="w-fit self-center mt-5"
+					onClick={handleSaveChanges}
+				>
 					Save changes
 				</Button>
 			</form>

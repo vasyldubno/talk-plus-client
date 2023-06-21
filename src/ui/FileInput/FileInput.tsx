@@ -66,7 +66,7 @@ export const FileInput: FC<FileInputProps> = ({
 			<Tooltip
 				label={imageBase64 ? 'Update avatar' : 'Select avatar'}
 				aria-label="a tooltip"
-				placement="left"
+				placement="bottom"
 			>
 				<Box
 					className={clsx(
@@ -79,7 +79,7 @@ export const FileInput: FC<FileInputProps> = ({
 					{imageBase64 ? (
 						<Image src={imageBase64} className={clsx(width, heigth)} />
 					) : (
-						<BsCamera className="w-full h-full p-[15%] hover:scale-[1.2] transition-all duration-300 fill-white" />
+						<BsCamera className="w-full h-full p-[15%] hover:scale-[1.1] transition-all duration-300 fill-white" />
 					)}
 				</Box>
 			</Tooltip>

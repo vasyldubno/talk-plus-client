@@ -82,7 +82,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 		}
 
 		return (
-			<>
+			<Box className="h-screen">
 				<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between flex items-center">
 					<Box className="cursor-pointer lg:hidden" onClick={onClose}>
 						<ArrowLeftIcon size="2rem" />
@@ -93,53 +93,56 @@ export const AddGroup: FC<AddGroupProps> = observer(
 				{isLoading ? (
 					<Loader />
 				) : (
-					<div className="flex flex-col mt-5 h-[100vh]">
-						<form
-							onSubmit={handleSubmit(onSubmit)}
-							encType="multipart/form-data"
-							className="flex flex-col items-center gap-5"
-						>
-							<Box className="flex items-center gap-5">
-								<FormControl
-									style={{
-										width: 'fit-content',
-									}}
-								>
-									<Controller
-										name="file"
-										control={control}
-										render={({ field: { onChange } }) => (
-											<FileInput
-												onChange={onChange}
-												error={errors.file}
-												setImageBase64={setImageBase64}
-												imageBase64={imageBase64}
-												heigth="h-16"
-												width="w-16"
-											/>
-										)}
-									/>
-								</FormControl>
-								<FormControl isInvalid={!!errors.title} className="text-white">
-									<FormLabel>Group Name</FormLabel>
-									<Input
-										type="text"
-										{...register('title')}
-										className="placeholder:text-gray-500"
-										placeholder="Typing text..."
-									/>
-									{errors.title && (
-										<FormErrorMessage>{errors.title.message}</FormErrorMessage>
-									)}
-								</FormControl>
-							</Box>
-							<Button type="submit" style={{ width: 'fit-content' }}>
-								Create Group
-							</Button>
-						</form>
-					</div>
+					// <div className="flex flex-col mt-5">
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						encType="multipart/form-data"
+						className="px-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10"
+					>
+						{/* <Box className="flex items-center gap-5"> */}
+						{/* <FormControl
+								style={{
+									width: 'fit-content',
+								}}
+							> */}
+						<Controller
+							name="file"
+							control={control}
+							render={({ field: { onChange } }) => (
+								<FileInput
+									onChange={onChange}
+									error={errors.file}
+									setImageBase64={setImageBase64}
+									imageBase64={imageBase64}
+									// heigth="h-16"
+									// width="w-16"
+									className="flex justify-center"
+									heigth="h-52"
+									width="w-52"
+								/>
+							)}
+						/>
+						{/* </FormControl> */}
+						<FormControl isInvalid={!!errors.title} className="text-white">
+							<FormLabel>Group Name</FormLabel>
+							<Input
+								type="text"
+								{...register('title')}
+								className="placeholder:text-gray-500"
+								placeholder="Typing text..."
+							/>
+							{errors.title && (
+								<FormErrorMessage>{errors.title.message}</FormErrorMessage>
+							)}
+						</FormControl>
+						{/* </Box> */}
+						<Button type="submit" className="mt-5 self-center w-fit">
+							Create Group
+						</Button>
+					</form>
+					// </div>
 				)}
-			</>
+			</Box>
 		)
 	},
 )
