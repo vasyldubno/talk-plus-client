@@ -1,23 +1,5 @@
 /* stylelint-disable selector-class-pattern */
-
-@import url('./react-crop.css');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-	--color-purple: #a95ffa;
-	--color-purple-50: rgb(169 95 250 / 50%) '';
-	--color-gray: #757575;
-	--color-gray-50: rgb(170 170 170 / 30%);
-	--color-dark-gray: #1f2121;
-	--color-middle-gray: #282e2d;
-	--color-subscriber-online: #9ceb9a;
-	--color-middle-green: #16836f;
-	--color-link: #0645ad;
-}
-
-/* .ReactCrop {
+.ReactCrop {
 	cursor: default !important;
 }
 
@@ -86,21 +68,4 @@
 	border-right: 0 solid white !important;
 	border-bottom: 0 solid white !important;
 	border-left: 0 solid white !important;
-} */
-
-.ReactModal__Overlay {
-	opacity: 0;
-	transition: opacity 300ms ease-in-out;
-}
-
-.ReactModal__Overlay--after-open {
-	opacity: 1;
-}
-
-.ReactModal__Overlay--before-close {
-	opacity: 0;
-}
-
-.chakra-modal__content-container {
-	align-items: center !important;
 }

@@ -1,5 +1,3 @@
 .button {
-	@media (hover: hover) {
-		@apply hover:rounded-full;
-	}
+	@apply hover:rounded-full;
 }
