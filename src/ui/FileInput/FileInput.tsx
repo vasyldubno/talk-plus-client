@@ -102,16 +102,13 @@ export const FileInput: FC<FileInputProps> = ({
 				<ModalContent
 					h="80vh"
 					w="max-content"
-					minH="80vh"
 					p={0}
 					backgroundColor="transparent"
 					boxShadow="none"
-					marginTop="10px"
 				>
 					<ImageCropper
 						image={selectedImage as File}
 						setImageBase64={setImageBase64}
-						// setSelectedImage={setSelectedImage}
 						onClose={onClose}
 					/>
 				</ModalContent>

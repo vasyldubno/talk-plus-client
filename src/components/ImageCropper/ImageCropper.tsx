@@ -15,6 +15,7 @@ import ReactCrop, {
 	makeAspectCrop,
 } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
+import { useMatchMedia } from '@/hooks/useMatchMedia'
 
 interface ImageCropperProps {
 	image: File
@@ -33,6 +34,8 @@ export const ImageCropper: FC<ImageCropperProps> = ({
 	const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
 	const [aspect] = useState<number>(1 / 1)
 	const [imageType, setImageType] = useState('')
+
+	const smSceen = useMatchMedia('(max-width: 640px)')
 
 	const centerAspectCrop = (
 		mediaWidth: number,
@@ -117,7 +120,7 @@ export const ImageCropper: FC<ImageCropperProps> = ({
 					ref={imgRef}
 					onLoad={onImageLoad}
 					w="auto"
-					h="80vh"
+					h={smSceen ? 'auto' : '80vh'}
 				/>
 			</ReactCrop>
 			<Button onClick={onDownloadCropClick} className="w-fit mx-auto mt-3">

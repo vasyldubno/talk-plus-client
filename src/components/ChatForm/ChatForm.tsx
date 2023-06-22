@@ -1,3 +1,4 @@
+import s from './ChatForm.module.scss'
 import {
 	Box,
 	Button,
@@ -6,7 +7,7 @@ import {
 	InputRightElement,
 } from '@chakra-ui/react'
 import clsx from 'clsx'
-import { ChangeEvent, FC, useState } from 'react'
+import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { COLORS } from '@/config/colors'
 import { useStore } from '@/hooks/useStore'
 import { SendIcon } from '@/icons/SendIcon'
@@ -30,6 +31,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 	afterSubmit,
 }) => {
 	const [value, setValue] = useState('')
+	const [isTouchScreen, setIsTouchScreen] = useState(false)
 
 	const store = useStore()
 	const userId = store.getUserId()
@@ -54,6 +56,19 @@ export const ChatForm: FC<IChatFormProps> = ({
 		setValue(e.target.value)
 	}
 
+	useEffect(() => {
+		if (typeof window !== undefined) {
+			window.addEventListener(
+				'touchstart',
+				function handleTouch() {
+					setIsTouchScreen(true)
+					window.removeEventListener('touchstart', handleTouch, false)
+				},
+				false,
+			)
+		}
+	}, [])
+
 	return (
 		<Box className={clsx('flex  gap-2 bg-[#1f2121] mt-3 px-3', className)}>
 			<InputGroup>
@@ -75,8 +90,8 @@ export const ChatForm: FC<IChatFormProps> = ({
 						rounded="full"
 						minWidth="1.9rem"
 						height="1.9rem"
-						className="hover:rounded-full"
-						_hover={{ bg: COLORS['purple-50'] }}
+						className={s.button}
+						_hover={{ bg: isTouchScreen ? 'transparent' : COLORS['purple-50'] }}
 						transition="all 0.5s"
 						onClick={handleClick}
 					>
