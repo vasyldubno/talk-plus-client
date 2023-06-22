@@ -71,6 +71,32 @@ export const HomeScreen: FC = observer(() => {
 								)
 							})}
 						</Box>
+						<Button
+							className="font-normal hover:scale-105 mb-10"
+							style={{ transition: 'all 0.5s' }}
+							onClick={() => router.push('/login')}
+						>
+							Get Started
+						</Button>
+						{/* <Box
+							className={clsx(
+								'flex justify-center text-sm mb-8',
+								xs ? 'flex-col gap-0' : 'flex-row gap-2',
+							)}
+						>
+							<Text
+								className={clsx('text-[var(--color-middle-gray)] text-center')}
+							>
+								Already have an account?
+							</Text>
+							<Link
+								className="text-white hover:scale-105 text-center"
+								href="/login"
+								style={{ transition: 'all 0.5s' }}
+							>
+								Log In
+							</Link>
+						</Box> */}
 						<Text
 							className={clsx(
 								'text-white font-bold text-center mb-8',
@@ -88,32 +114,6 @@ export const HomeScreen: FC = observer(() => {
 							Connect with each other while chatting or calling. Enjoy safe and
 							private texting
 						</Text>
-						<Button
-							className="font-normal hover:scale-105 mb-2"
-							style={{ transition: 'all 0.5s' }}
-							onClick={() => router.push('/register')}
-						>
-							Join Now
-						</Button>
-						<Box
-							className={clsx(
-								'flex justify-center text-sm',
-								xs ? 'flex-col gap-0' : 'flex-row gap-2',
-							)}
-						>
-							<Text
-								className={clsx('text-[var(--color-middle-gray)] text-center')}
-							>
-								Already have an account?
-							</Text>
-							<Link
-								className="text-white hover:scale-105 text-center"
-								href="/login"
-								style={{ transition: 'all 0.5s' }}
-							>
-								Log In
-							</Link>
-						</Box>
 					</Box>
 				</Box>
 			)}

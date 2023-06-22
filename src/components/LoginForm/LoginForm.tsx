@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	FormControl,
 	FormErrorMessage,
@@ -13,9 +14,12 @@ import { FC, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { z } from 'zod'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { METADATA } from '@/config/metadata'
 import { useStore } from '@/hooks/useStore'
 import { AuthService } from '@/services/authService'
+import { DividerWithText } from '@/ui/DividerWithText/DividerWithText'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
 
 export const LoginForm: FC = observer(() => {
@@ -107,13 +111,21 @@ export const LoginForm: FC = observer(() => {
 					)}
 				</FormControl>
 
-				<PasswordInput
-					register={register}
-					errors={errors.password}
-					label="Password"
-					name="password"
-					onChange={() => setErrorPassword('')}
-				/>
+				<Box className="flex flex-col">
+					<PasswordInput
+						register={register}
+						errors={errors.password}
+						label="Password"
+						name="password"
+						onChange={() => setErrorPassword('')}
+					/>
+					<Link
+						href="/forgot-password"
+						className="text-sm hover:text-[var(--color-link)] hover:underline self-end"
+					>
+						Forgot Password?
+					</Link>
+				</Box>
 
 				<Button
 					colorScheme="purple"
@@ -125,6 +137,22 @@ export const LoginForm: FC = observer(() => {
 					Login
 				</Button>
 			</form>
+			<Box className="flex flex-col">
+				<DividerWithText
+					text={`New to ${METADATA.title}?`}
+					styles={{ marginTop: '3rem', marginBottom: '1rem' }}
+				/>
+				<Button
+					colorScheme="purple"
+					type="button"
+					className="w-fit"
+					style={{ alignSelf: 'center' }}
+					aria-label="Create New Account"
+					onClick={() => router.push('/register')}
+				>
+					Create New Account
+				</Button>
+			</Box>
 		</>
 	)
 })

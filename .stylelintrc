@@ -18,7 +18,8 @@
 			{
 				"ignoreAtRules": ["tailwind"]
 			}
-		]
+		],
+		"selector-class-pattern": "^[a-zA-Z]+$"
 	},
 	"ignoreFiles": [".next"]
 }

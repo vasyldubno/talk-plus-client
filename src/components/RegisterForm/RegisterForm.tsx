@@ -69,6 +69,7 @@ export const RegisterForm: FC = () => {
 
 				const responseSignIn = await signIn('credentials', {
 					userId: response.id.toString(),
+					accessToken: response.accessToken,
 					redirect: false,
 				})
 

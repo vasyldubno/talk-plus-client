@@ -230,6 +230,8 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}
 
+	// console.log(authTokenStore.authToken)
+
 	return (
 		<>
 			{socketError && <p>{socketError}</p>}
