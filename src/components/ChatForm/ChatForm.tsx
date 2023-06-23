@@ -7,7 +7,7 @@ import {
 	InputRightElement,
 } from '@chakra-ui/react'
 import clsx from 'clsx'
-import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FC, FormEvent, useEffect, useRef, useState } from 'react'
 import { COLORS } from '@/config/colors'
 import { useStore } from '@/hooks/useStore'
 import { SendIcon } from '@/icons/SendIcon'
@@ -36,6 +36,8 @@ export const ChatForm: FC<IChatFormProps> = ({
 	const store = useStore()
 	const userId = store.getUserId()
 
+	const inputRef = useRef<HTMLInputElement>(null)
+
 	const handleClick = () => {
 		if (socket && userId) {
 			const response = socket.emit('message', {
@@ -50,6 +52,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 				afterSubmit()
 			}
 		}
+		inputRef.current?.blur()
 	}
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +82,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 			<form className={s.form} onSubmit={handleSubmit}>
 				<InputGroup>
 					<Input
+						ref={inputRef}
 						className="text-white p-2"
 						placeholder="Write message"
 						onChange={handleChange}
