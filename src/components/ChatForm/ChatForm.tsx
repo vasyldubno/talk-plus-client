@@ -7,7 +7,7 @@ import {
 	InputRightElement,
 } from '@chakra-ui/react'
 import clsx from 'clsx'
-import { ChangeEvent, FC, useEffect, useState } from 'react'
+import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react'
 import { COLORS } from '@/config/colors'
 import { useStore } from '@/hooks/useStore'
 import { SendIcon } from '@/icons/SendIcon'
@@ -69,36 +69,46 @@ export const ChatForm: FC<IChatFormProps> = ({
 		}
 	}, [])
 
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		handleClick()
+	}
+
 	return (
 		<Box className={clsx('flex  gap-2 bg-[#1f2121] mt-3 px-3', className)}>
-			<InputGroup>
-				<Input
-					className="text-white p-2"
-					placeholder="Write message"
-					onChange={handleChange}
-					value={value}
-					onKeyUp={(e) => {
-						if (e.key === 'Enter') {
-							handleClick()
-						}
-					}}
-				/>
-				<InputRightElement>
-					<Button
-						padding={0}
-						bg="transparent"
-						rounded="full"
-						minWidth="1.9rem"
-						height="1.9rem"
-						className={s.button}
-						_hover={{ bg: isTouchScreen ? 'transparent' : COLORS['purple-50'] }}
-						transition="all 0.5s"
-						onClick={handleClick}
-					>
-						<SendIcon size="1rem" className="cursor-pointer" />
-					</Button>
-				</InputRightElement>
-			</InputGroup>
+			<form className={s.form} onSubmit={handleSubmit}>
+				<InputGroup>
+					<Input
+						className="text-white p-2"
+						placeholder="Write message"
+						onChange={handleChange}
+						value={value}
+						onKeyUp={(e) => {
+							if (e.key === 'Enter') {
+								handleClick()
+							}
+						}}
+					/>
+					<InputRightElement>
+						<Button
+							padding={0}
+							bg="transparent"
+							rounded="full"
+							minWidth="1.9rem"
+							height="1.9rem"
+							className={s.button}
+							_hover={{
+								bg: isTouchScreen ? 'transparent' : COLORS['purple-50'],
+							}}
+							transition="all 0.5s"
+							type="submit"
+							// onClick={handleClick}
+						>
+							<SendIcon size="1rem" className="cursor-pointer" />
+						</Button>
+					</InputRightElement>
+				</InputGroup>
+			</form>
 		</Box>
 	)
 }
