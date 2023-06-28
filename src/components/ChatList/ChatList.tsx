@@ -46,7 +46,7 @@ export const ChatList: FC<ChatListProps> = observer(
 									chat={chat}
 									selectedChat={`${selectedChat?.id}-${selectedChat?.type}`}
 									onClick={() => {
-										console.log('onClick')
+										// console.log('onClick')
 										setSelectedChat(chat)
 										setIsOpenLeftSide(false)
 										setIsOpenRightSide(true)
@@ -58,6 +58,25 @@ export const ChatList: FC<ChatListProps> = observer(
 							))}
 					</>
 				)}
+				{/* <>
+					{!searchValue &&
+						chats.map((chat) => (
+							<ChatItem
+								key={`${chat.id}-${chat.type}`}
+								chat={chat}
+								selectedChat={`${selectedChat?.id}-${selectedChat?.type}`}
+								onClick={() => {
+									// console.log('onClick')
+									setSelectedChat(chat)
+									setIsOpenLeftSide(false)
+									setIsOpenRightSide(true)
+								}}
+								conversation={conversations.find(
+									(conversation) => conversation.id === chat.id,
+								)}
+							/>
+						))}
+				</> */}
 			</Box>
 		)
 	},

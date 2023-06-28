@@ -45,7 +45,7 @@ export interface IChat {
 
 interface ISocketMessage {
 	message: string
-	room: string | undefined
+	room: string
 	roomId: number
 	userId: string
 	type: 'group' | 'chat' | undefined

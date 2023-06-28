@@ -70,8 +70,8 @@ export const UserProvider: FC<{
 		update()
 	}, [update])
 
-	console.log('Store', store)
-	console.log('Session', session)
+	// console.log('Store', store)
+	// console.log('Session', session)
 
 	return <UserContext.Provider value={store}>{children}</UserContext.Provider>
 })

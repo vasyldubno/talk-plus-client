@@ -11,37 +11,43 @@ export const socketMessage = (
 	setChats: Dispatch<SetStateAction<IChat[]>>,
 ) => {
 	return socket.on('message', (payload) => {
+		const newMessage: IMessage = {
+			id: payload.message.id,
+			message: payload.message.message,
+			author: {
+				avatar: payload.message.author.avatar,
+				id: payload.message.author.id,
+				firstName: payload.message.author.firstName,
+			},
+			createdAt: payload.message.createdAt,
+			updatedAt: payload.message.updatedAt,
+		}
+
 		setConversations((prev) => {
-			const currentRoom = prev.find((room) => room.id === payload.id)
-			const otherRooms = prev.filter((room) => room.id !== payload.id)
-			const newMessage: IMessage = {
-				id: payload.message.id,
-				message: payload.message.message,
-				author: {
-					avatar: payload.message.author.avatar,
-					id: payload.message.author.id,
-					firstName: payload.message.author.firstName,
-				},
-				createdAt: payload.message.createdAt,
-				updatedAt: payload.message.updatedAt,
+			const isExistRoom = prev.find((room) => room.room === payload.room)
+			const isExistMessage = isExistRoom?.messages.some(
+				(message) => Number(message.id) === Number(newMessage.id),
+			)
+
+			if (isExistRoom && !isExistMessage) {
+				isExistRoom.messages.unshift(newMessage)
+
+				return prev
 			}
-			if (currentRoom) {
-				currentRoom.messages.unshift(newMessage)
-				return [...otherRooms, currentRoom]
+
+			if (isExistRoom && isExistMessage) {
+				return prev
 			}
+
 			return [
-				...otherRooms,
-				{
-					id: payload.id,
-					room: payload.room,
-					messages: [newMessage],
-				},
+				...prev,
+				{ id: payload.id, room: payload.room, messages: [newMessage] },
 			]
 		})
 
+		// console.log(selectedChat)
+
 		scrollToBottom(chatFeedRef)
-		if (selectedChat) {
-			moveChatToTop(selectedChat, setChats)
-		}
+		// moveChatToTop(selectedChat, setChats)
 	})
 }

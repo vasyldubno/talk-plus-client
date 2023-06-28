@@ -6,9 +6,9 @@ export const socketOnChat = (
 	socket: ISocket,
 	setChats: Dispatch<SetStateAction<IChat[]>>,
 	setSelectedChat: Dispatch<SetStateAction<IChat | null>>,
-	userId: string | null,
 	store: UserStore,
 ) => {
+	const userId = store.getUserId()
 	return socket.on('chat', (payload) => {
 		setChats((prev) => [
 			{

@@ -28,13 +28,20 @@ interface ChatHeaderProps {
 	chat: IChat
 	setChats: Dispatch<SetStateAction<IChat[]>>
 	setSelectedChat: Dispatch<SetStateAction<IChat | null>>
-	setMessages: Dispatch<SetStateAction<IConversation[]>>
+	setConversations: Dispatch<SetStateAction<IConversation[]>>
 	onClickBack: () => void
 	socket: ISocket | null
 }
 
 export const ChatHeader: FC<ChatHeaderProps> = observer(
-	({ chat, setChats, setSelectedChat, setMessages, onClickBack, socket }) => {
+	({
+		chat,
+		setChats,
+		setSelectedChat,
+		setConversations,
+		onClickBack,
+		socket,
+	}) => {
 		const [isAddNewUser, setIsAddNewUser] = useState(false)
 		const [users, setUsers] = useState<IUser[] | null>(null)
 		const [selectedUsers, setSelectedUsers] = useState<IUser[] | null>(null)
@@ -44,7 +51,7 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 		const handleDeleteGroup = () => {
 			store.updateIsLoading(true)
 			// setChats((prev) => prev.filter((c) => c.title !== chat.title))
-			setMessages((prev) => prev.filter((c) => c.room !== chat.title))
+			setConversations((prev) => prev.filter((c) => c.room !== chat.title))
 			if (socket) {
 				socket.emit('delete-group', {
 					title: chat.title,

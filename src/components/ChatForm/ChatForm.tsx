@@ -7,7 +7,15 @@ import {
 	InputRightElement,
 } from '@chakra-ui/react'
 import clsx from 'clsx'
-import { ChangeEvent, FC, FormEvent, useEffect, useRef, useState } from 'react'
+import {
+	ChangeEvent,
+	FC,
+	FormEvent,
+	KeyboardEvent,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import { COLORS } from '@/config/colors'
 import { useStore } from '@/hooks/useStore'
 import { SendIcon } from '@/icons/SendIcon'
@@ -15,7 +23,7 @@ import { ISocket } from '@/types/types'
 
 interface IChatFormProps {
 	socket: ISocket | null
-	room: string | undefined
+	room: string
 	roomId: number
 	typeChat: 'chat' | 'group' | undefined
 	className?: string
@@ -40,7 +48,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 
 	const handleClick = () => {
 		if (socket && userId) {
-			const response = socket.emit('message', {
+			socket.emit('message', {
 				message: value,
 				room,
 				roomId,
@@ -48,9 +56,6 @@ export const ChatForm: FC<IChatFormProps> = ({
 				type: typeChat,
 			})
 			setValue('')
-			if (response) {
-				afterSubmit()
-			}
 		}
 
 		if (isTouchScreen) {
@@ -58,6 +63,18 @@ export const ChatForm: FC<IChatFormProps> = ({
 		} else {
 			inputRef.current?.focus()
 		}
+	}
+
+	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			handleClick()
+		}
+	}
+
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		handleClick()
 	}
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -77,11 +94,6 @@ export const ChatForm: FC<IChatFormProps> = ({
 		}
 	}, [])
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
-		handleClick()
-	}
-
 	return (
 		<Box className={clsx('flex  gap-2 bg-[#1f2121] mt-3 px-3', className)}>
 			<form className={s.form} onSubmit={handleSubmit}>
@@ -92,11 +104,6 @@ export const ChatForm: FC<IChatFormProps> = ({
 						placeholder="Write message"
 						onChange={handleChange}
 						value={value}
-						onKeyUp={(e) => {
-							if (e.key === 'Enter') {
-								handleClick()
-							}
-						}}
 					/>
 					<InputRightElement>
 						<Button
@@ -111,7 +118,6 @@ export const ChatForm: FC<IChatFormProps> = ({
 							}}
 							transition="all 0.5s"
 							type="submit"
-							// onClick={handleClick}
 						>
 							<SendIcon size="1rem" className="cursor-pointer" />
 						</Button>

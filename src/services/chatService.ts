@@ -51,8 +51,11 @@ export class ChatService {
 		return $axios.post('/chat/delete-chat', { chatId: chatId.toString() })
 	}
 
-	static getAllChats() {
-		return $axios.post<{ chats: IChatResponse[] }>('/chat/get-all-chats')
+	static async getAllChats() {
+		const response = await $axios.post<{ chats: IChatResponse[] }>(
+			'/chat/get-all-chats',
+		)
+		return response.data.chats
 	}
 
 	static async getMessages(dto: IGetMessagesPayload) {

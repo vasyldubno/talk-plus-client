@@ -45,10 +45,10 @@ export default function App({ Component, pageProps }: AppProps) {
 	)
 }
 
-export function reportWebVitals(metric: NextWebVitalsMetric) {
-	if (metric.label === 'web-vital') {
-		console.log(metric)
-	}
-}
+// export function reportWebVitals(metric: NextWebVitalsMetric) {
+// 	if (metric.label === 'web-vital') {
+// 		console.log(metric)
+// 	}
+// }
 
-reportAccessibility(React)
+// reportAccessibility(React)

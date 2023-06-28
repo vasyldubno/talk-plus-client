@@ -69,8 +69,31 @@ export const ChatScreen: FC = observer(() => {
 				},
 			)
 			setSocket(newSocket)
+			ChatService.getAllChats().then((res) => {
+				setChats(res)
+				setChatsLoaded(true)
+			})
 		}
 	}, [isLoaded, router, store, isLogged])
+
+	useEffect(() => {
+		if (socket) {
+			socketOnChat(socket, setChats, setSelectedChat, store)
+
+			// socket.emit('allChats')
+
+			socket.on('allChats', (payload) => {
+				setChats(payload)
+				store.updateIsLoading(false)
+			})
+
+			socket.on('onlineUsers', (payload) => {
+				store.updateOnlineUsers(
+					payload.onlineUsers.filter((onlineUser) => onlineUser !== null),
+				)
+			})
+		}
+	}, [socket, store])
 
 	useEffect(() => {
 		if (socket) {
@@ -81,30 +104,15 @@ export const ChatScreen: FC = observer(() => {
 				selectedChat,
 				setChats,
 			)
-			socketOnChat(socket, setChats, setSelectedChat, userId, store)
-
-			socket.emit('allChats')
-
-			socket.on('allChats', (payload) => {
-				setChats(payload)
-				setChatsLoaded(true)
-				// setSelectedChat(null)
-				store.updateIsLoading(false)
-			})
-
-			socket.on('onlineUsers', (payload) => {
-				store.updateOnlineUsers(
-					payload.onlineUsers.filter((onlineUser) => onlineUser !== null),
-				)
-			})
 		}
-	}, [socket, store, userId, selectedChat])
+	}, [socket, selectedChat])
 
 	useEffect(() => {
 		if (socket && chatsLoaded) {
 			socket.on('connect_error', (error) => {
 				setSocketError(error.message)
 			})
+
 			chats.forEach((chat) => {
 				socket.emit('join', { room: chat.title, type: chat.type })
 
@@ -113,17 +121,27 @@ export const ChatScreen: FC = observer(() => {
 					chatId: chat.id,
 					type: chat.type,
 				}).then((messages) => {
-					const newConversation: IConversation = {
-						id: chat.id,
-						room: chat.title,
-						messages,
-					}
+					setConversations((prev) => {
+						const isExistConversation = prev.find(
+							(conversation) => Number(conversation.id) === Number(chat.id),
+						)
 
-					setConversations((prev) => [...prev, newConversation])
+						if (!isExistConversation) {
+							const newConversation: IConversation = {
+								id: chat.id,
+								room: chat.title,
+								messages,
+							}
+							return [...prev, newConversation]
+						}
+
+						return prev
+					})
 				})
 			})
 		}
-	}, [chatsLoaded, chats, socket])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [socket, chatsLoaded])
 
 	useEffect(() => {
 		if (debouncedValue.length >= 3) {
@@ -218,8 +236,6 @@ export const ChatScreen: FC = observer(() => {
 			}
 		}
 	}
-
-	console.log(selectedChat)
 
 	return (
 		<>
@@ -323,7 +339,7 @@ export const ChatScreen: FC = observer(() => {
 									chat={selectedChat}
 									setChats={setChats}
 									setSelectedChat={setSelectedChat}
-									setMessages={setConversations}
+									setConversations={setConversations}
 									onClickBack={() => {
 										setIsOpenLeftSide(true)
 										setIsOpenRightSide(false)
