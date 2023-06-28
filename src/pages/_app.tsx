@@ -12,6 +12,7 @@ import { Head } from '@/components/Head/Head'
 import { ReactQueryConfig } from '@/config/reactQueryConfig'
 import { useStore } from '@/hooks/useStore'
 import { UserProvider } from '@/providers/UserProvider/UserProvider'
+import { Loader } from '@/ui/Loader/Loader'
 
 const font = Poppins({
 	weight: ['300', '400', '500', '600', '700'],
@@ -20,6 +21,7 @@ const font = Poppins({
 
 export default function App({ Component, pageProps }: AppProps) {
 	const userStore = useStore()
+	const isLoading = userStore.getIsLoading()
 	const [queryClient] = useState(() => new QueryClient(ReactQueryConfig))
 
 	return (
@@ -32,6 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
 								<Head>
 									<Component {...pageProps} />
 									<ToastContainer />
+									{isLoading && <Loader />}
 								</Head>
 							</ChakraProvider>
 						</main>

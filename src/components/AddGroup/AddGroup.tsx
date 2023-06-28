@@ -30,9 +30,9 @@ export const AddGroup: FC<AddGroupProps> = observer(
 	({ setChats, setIsAddGroup, setSelectedChat, socket, onClose }) => {
 		const store = useStore()
 		const userId = store.getUserId()
+		const isLoading = store.getIsLoading()
 
 		const [imageBase64, setImageBase64] = useState('')
-		const [isLoading, setIsLoading] = useState(false)
 
 		const formSchema = z.object({
 			title: z.string().min(3, 'Must contain min 3 symbols'),
@@ -52,7 +52,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 		})
 
 		const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-			setIsLoading(true)
+			store.updateIsLoading(true)
 
 			if (userId) {
 				const response = await ChatService.addGroup(
@@ -76,35 +76,26 @@ export const AddGroup: FC<AddGroupProps> = observer(
 					setChats((prev) => [newChat, ...prev])
 					setIsAddGroup(false)
 					setSelectedChat(newChat)
-					setIsLoading(false)
+					store.updateIsLoading(false)
 				}
 			}
 		}
 
 		return (
 			<Box className="h-screen">
-				<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between flex items-center">
+				<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between lg:justify-center flex items-center">
 					<Box className="cursor-pointer lg:hidden" onClick={onClose}>
 						<ArrowLeftIcon size="2rem" />
 					</Box>
-					<h1 className="text-center font-bold text-white">New Group</h1>
-					<div />
+					<h1 className="font-bold text-white text-2xl py-2">New Group</h1>
+					<div className="lg:hidden" />
 				</Box>
-				{isLoading ? (
-					<Loader />
-				) : (
-					// <div className="flex flex-col mt-5">
+				{!isLoading && (
 					<form
 						onSubmit={handleSubmit(onSubmit)}
 						encType="multipart/form-data"
 						className="px-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10"
 					>
-						{/* <Box className="flex items-center gap-5"> */}
-						{/* <FormControl
-								style={{
-									width: 'fit-content',
-								}}
-							> */}
 						<Controller
 							name="file"
 							control={control}
@@ -114,15 +105,12 @@ export const AddGroup: FC<AddGroupProps> = observer(
 									error={errors.file}
 									setImageBase64={setImageBase64}
 									imageBase64={imageBase64}
-									// heigth="h-16"
-									// width="w-16"
 									className="flex justify-center"
 									heigth="h-52"
 									width="w-52"
 								/>
 							)}
 						/>
-						{/* </FormControl> */}
 						<FormControl isInvalid={!!errors.title} className="text-white">
 							<FormLabel>Group Name</FormLabel>
 							<Input
@@ -135,13 +123,51 @@ export const AddGroup: FC<AddGroupProps> = observer(
 								<FormErrorMessage>{errors.title.message}</FormErrorMessage>
 							)}
 						</FormControl>
-						{/* </Box> */}
 						<Button type="submit" className="mt-5 self-center w-fit">
 							Create Group
 						</Button>
 					</form>
-					// </div>
 				)}
+				{/* {isLoading ? (
+					<Loader />
+				) : (
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						encType="multipart/form-data"
+						className="px-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10"
+					>
+						<Controller
+							name="file"
+							control={control}
+							render={({ field: { onChange } }) => (
+								<FileInput
+									onChange={onChange}
+									error={errors.file}
+									setImageBase64={setImageBase64}
+									imageBase64={imageBase64}
+									className="flex justify-center"
+									heigth="h-52"
+									width="w-52"
+								/>
+							)}
+						/>
+						<FormControl isInvalid={!!errors.title} className="text-white">
+							<FormLabel>Group Name</FormLabel>
+							<Input
+								type="text"
+								{...register('title')}
+								className="placeholder:text-gray-500"
+								placeholder="Typing text..."
+							/>
+							{errors.title && (
+								<FormErrorMessage>{errors.title.message}</FormErrorMessage>
+							)}
+						</FormControl>
+						<Button type="submit" className="mt-5 self-center w-fit">
+							Create Group
+						</Button>
+					</form>
+				)} */}
 			</Box>
 		)
 	},

@@ -59,6 +59,20 @@ interface ISocketJoin {
 export interface ISocketEventsToServer {
 	message: (payload: ISocketMessage) => void
 	join: (payload: ISocketJoin) => void
+	chat: (payload: {
+		title: string
+		imageSrc: string
+		guestUserId: number
+		type: 'chat' | 'group'
+	}) => void
+	allChats: () => void
+	deleteChat: (payload: { chatId: string }) => void
+	'subscribe-group': (payload: {
+		userId: string
+		nameGroup: string
+		idGroup: string
+	}) => void
+	'delete-group': (payload: { groupId: string; title: string }) => void
 }
 
 export interface ISocketEventsFromServer {
@@ -68,6 +82,24 @@ export interface ISocketEventsFromServer {
 		id: number
 	}) => void
 	onlineUsers: (payload: { onlineUsers: number[] }) => void
+	chat: (payload: {
+		title: string
+		imageUrl: string
+		id: number
+		type: 'chat' | 'group'
+		authorId: number
+	}) => void
+	allChats: (
+		payload: {
+			id: number
+			title: string
+			type: 'chat' | 'group'
+			imageUrl: string
+			createdAt: string
+			updatedAt: string
+			isAdmin?: boolean
+		}[],
+	) => void
 }
 
 export type ISocket = Socket<ISocketEventsFromServer, ISocketEventsToServer>

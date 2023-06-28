@@ -6,6 +6,7 @@ export class UserStore {
 	private userId: string | null
 	private timezone: string | null
 	private onlineUsers: number[]
+	private isLoading: boolean
 
 	constructor() {
 		this.isLogged = false
@@ -13,6 +14,7 @@ export class UserStore {
 		this.userId = null
 		this.timezone = null
 		this.onlineUsers = []
+		this.isLoading = false
 		makeAutoObservable(this)
 	}
 
@@ -41,6 +43,11 @@ export class UserStore {
 		return null
 	}
 
+	updateIsLoading(payload: boolean) {
+		this.isLoading = payload
+		return null
+	}
+
 	getIsLogged() {
 		return this.isLogged
 	}
@@ -59,5 +66,9 @@ export class UserStore {
 
 	getOnlineUsers() {
 		return this.onlineUsers
+	}
+
+	getIsLoading() {
+		return this.isLoading
 	}
 }

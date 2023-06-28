@@ -52,7 +52,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 				afterSubmit()
 			}
 		}
-		inputRef.current?.blur()
+		inputRef.current?.focus()
 	}
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

@@ -2,14 +2,13 @@ import { Box } from '@chakra-ui/react'
 import clsx from 'clsx'
 import { observer } from 'mobx-react-lite'
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
-import { useQuery } from 'react-query'
 import io from 'socket.io-client'
 import { useRouter } from 'next/router'
 import { AddGroup } from '@/components/AddGroup/AddGroup'
 import { ChatFeed } from '@/components/ChatFeed/ChatFeed'
 import { ChatForm } from '@/components/ChatForm/ChatForm'
 import { ChatHeader } from '@/components/ChatHeader/ChatHeader'
-import { ChatItem } from '@/components/ChatItem/ChatItem'
+import { ChatList } from '@/components/ChatList/ChatList'
 import { ChatMenu } from '@/components/ChatMenu/ChatMenu'
 import { ChatSearchInput } from '@/components/ChatSearchInput/ChatSearchInput'
 import { ProfileSettings } from '@/components/ProfileSettings/ProfileSettings'
@@ -26,6 +25,7 @@ import { getCurrentConversation } from '@/utils/getCurrentConversation'
 import { moveChatToTop } from '@/utils/moveChatToTop'
 import { scrollToBottom } from '@/utils/scrollToBottom'
 import { socketMessage } from '@/utils/socketMessage'
+import { socketOnChat } from '@/utils/socketOnChat'
 
 export const ChatScreen: FC = observer(() => {
 	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
@@ -52,6 +52,7 @@ export const ChatScreen: FC = observer(() => {
 	const store = useStore()
 	const isLogged = store.getIsLogged()
 	const isLoaded = store.getIsLoaded()
+	const isLoading = store.getIsLoading()
 	const userId = store.getUserId()
 
 	useEffect(() => {
@@ -73,14 +74,31 @@ export const ChatScreen: FC = observer(() => {
 
 	useEffect(() => {
 		if (socket) {
-			socketMessage(socket, setConversations)
+			socketMessage(
+				socket,
+				setConversations,
+				chatFeedRef,
+				selectedChat,
+				setChats,
+			)
+			socketOnChat(socket, setChats, setSelectedChat, userId, store)
+
+			socket.emit('allChats')
+
+			socket.on('allChats', (payload) => {
+				setChats(payload)
+				setChatsLoaded(true)
+				// setSelectedChat(null)
+				store.updateIsLoading(false)
+			})
+
 			socket.on('onlineUsers', (payload) => {
 				store.updateOnlineUsers(
 					payload.onlineUsers.filter((onlineUser) => onlineUser !== null),
 				)
 			})
 		}
-	}, [socket, store])
+	}, [socket, store, userId, selectedChat])
 
 	useEffect(() => {
 		if (socket && chatsLoaded) {
@@ -137,18 +155,6 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}, [md])
 
-	const { isLoading: isLoadingChats } = useQuery(
-		'all-chats',
-		ChatService.getAllChats,
-		{
-			enabled: !!userId,
-			onSuccess(data) {
-				setChats(data.data.chats)
-				setChatsLoaded(true)
-			},
-		},
-	)
-
 	const handleAddGroup = () => {
 		setIsAddGroup(true)
 		setSelectedChat(null)
@@ -176,7 +182,8 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}
 
-	const handleUserFromSearch = async (user: IChat) => {
+	const handleUserFromSearch = (user: IChat) => {
+		store.updateIsLoading(true)
 		const existedChat = chats.find((c) => c.title === user.title)
 
 		if (existedChat) {
@@ -197,32 +204,14 @@ export const ChatScreen: FC = observer(() => {
 				if (socket) {
 					socket.emit('join', { room: user.title, type: 'chat' })
 
-					const {
-						data: { chat },
-					} = await ChatService.addPersonalChat(
-						user.title,
-						user.imageUrl,
-						user.id,
-					)
+					socket.emit('chat', {
+						title: user.title,
+						imageSrc: user.imageUrl,
+						guestUserId: user.id,
+						type: 'chat',
+					})
 
 					setSearchValue('')
-
-					setChats((prev) => [
-						{
-							id: chat.id,
-							imageUrl: user.imageUrl,
-							title: user.title,
-							type: user.type ? 'group' : 'chat',
-						},
-						...prev,
-					])
-
-					setSelectedChat({
-						id: chat.id,
-						imageUrl: user.imageUrl,
-						title: user.title,
-						type: user.type ? 'group' : 'chat',
-					})
 				}
 			} catch (e) {
 				console.log('Error with socket connection')
@@ -230,12 +219,12 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}
 
-	// console.log(authTokenStore.authToken)
+	console.log(selectedChat)
 
 	return (
 		<>
+			{isLoading && <Loader />}
 			{socketError && <p>{socketError}</p>}
-			{/* {isLoading && <Loader />} */}
 			{isLogged && isLoaded && !socketError && (
 				<Box className="flex">
 					{isAddGroup &&
@@ -293,34 +282,24 @@ export const ChatScreen: FC = observer(() => {
 										key={user.id}
 										chat={user}
 										selectedChat={selectedChat?.id.toString()}
-										onClick={() => handleUserFromSearch(user)}
+										onClick={() => {
+											handleUserFromSearch(user)
+										}}
 									/>
 								))}
 						</Box>
-						<Box className="p-2">
-							{isLoadingChats ? (
-								<p className="text-white font-bold text-center">Updating...</p>
-							) : (
-								<>
-									{!searchValue &&
-										chats.map((chat) => (
-											<ChatItem
-												key={`${chat.id}-${chat.type}`}
-												chat={chat}
-												selectedChat={`${selectedChat?.id}-${selectedChat?.type}`}
-												onClick={() => {
-													setSelectedChat(chat)
-													setIsOpenLeftSide(false)
-													setIsOpenRightSide(true)
-												}}
-												conversation={conversations.find(
-													(conversation) => conversation.id === chat.id,
-												)}
-											/>
-										))}
-								</>
-							)}
-						</Box>
+						<ChatList
+							chats={chats}
+							conversations={conversations}
+							searchValue={searchValue}
+							selectedChat={selectedChat}
+							setChats={setChats}
+							setChatsLoaded={setChatsLoaded}
+							setIsOpenLeftSide={setIsOpenLeftSide}
+							setIsOpenRightSide={setIsOpenRightSide}
+							setSelectedChat={setSelectedChat}
+							chatsLoaded={chatsLoaded}
+						/>
 					</Box>
 					<Box
 						className={clsx(
@@ -340,6 +319,7 @@ export const ChatScreen: FC = observer(() => {
 						{selectedChat && (
 							<Box className="flex flex-col pb-3 h-[100vh] w-full">
 								<ChatHeader
+									socket={socket}
 									chat={selectedChat}
 									setChats={setChats}
 									setSelectedChat={setSelectedChat}
@@ -366,8 +346,8 @@ export const ChatScreen: FC = observer(() => {
 									typeChat={selectedChat.type}
 									className="relative bottom-0"
 									afterSubmit={() => {
-										scrollToBottom(chatFeedRef)
-										moveChatToTop(selectedChat, setChats)
+										// scrollToBottom(chatFeedRef)
+										// moveChatToTop(selectedChat, setChats)
 									}}
 								/>
 							</Box>

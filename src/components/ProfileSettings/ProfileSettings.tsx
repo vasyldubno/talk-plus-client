@@ -47,12 +47,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 
 	return (
 		<div className="h-screen">
-			<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between flex items-center">
+			<Box className="bg-[var(--color-middle-gray)] py-4 px-3 justify-between lg:justify-center flex items-center">
 				<Box className="cursor-pointer lg:hidden" onClick={onClose}>
 					<ArrowLeftIcon size="2rem" />
 				</Box>
-				<h1 className="font-bold text-center text-white text-lg">Settings</h1>
-				<div />
+				<h1 className="font-bold text-white text-2xl py-2">Settings</h1>
+				<div className="lg:hidden" />
 			</Box>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
@@ -73,10 +73,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 						/>
 					)}
 				/>
-				<FormControl>
+				{/* <FormControl>
 					<FormLabel className="text-white">Username</FormLabel>
 					<Input {...register('userName')} className="text-white" />
-				</FormControl>
+				</FormControl> */}
 				<Button
 					type="submit"
 					className="w-fit self-center mt-5"

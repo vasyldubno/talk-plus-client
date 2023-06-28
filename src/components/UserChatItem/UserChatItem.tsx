@@ -1,3 +1,4 @@
+import s from './UserChatItem.module.scss'
 import { Box, Image, Text } from '@chakra-ui/react'
 import clsx from 'clsx'
 import { FC } from 'react'
@@ -19,8 +20,8 @@ export const UserChatItem: FC<UserChatItemProps> = ({
 		<>
 			<Box
 				className={clsx(
-					'cursor-pointer flex p-2 w-full rounded-xl hover:bg-[var(--color-purple)] hover:transition-all',
-					selectedChat === chat.id.toString() && 'bg-slate-400',
+					s.box,
+					// selectedChat === chat.id.toString() && 'bg-slate-400',
 				)}
 				onClick={onClick}
 			>

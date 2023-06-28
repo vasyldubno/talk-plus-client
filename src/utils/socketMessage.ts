@@ -1,9 +1,14 @@
-import { Dispatch, SetStateAction } from 'react'
-import { IConversation, IMessage, ISocket } from '@/types/types'
+import { moveChatToTop } from './moveChatToTop'
+import { scrollToBottom } from './scrollToBottom'
+import { Dispatch, RefObject, SetStateAction } from 'react'
+import { IChat, IConversation, IMessage, ISocket } from '@/types/types'
 
 export const socketMessage = (
 	socket: ISocket,
 	setConversations: Dispatch<SetStateAction<IConversation[]>>,
+	chatFeedRef: RefObject<HTMLDivElement>,
+	selectedChat: IChat | null,
+	setChats: Dispatch<SetStateAction<IChat[]>>,
 ) => {
 	return socket.on('message', (payload) => {
 		setConversations((prev) => {
@@ -33,5 +38,10 @@ export const socketMessage = (
 				},
 			]
 		})
+
+		scrollToBottom(chatFeedRef)
+		if (selectedChat) {
+			moveChatToTop(selectedChat, setChats)
+		}
 	})
 }

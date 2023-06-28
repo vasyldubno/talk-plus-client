@@ -49,6 +49,7 @@ export const LoginForm: FC = observer(() => {
 	const { refetch } = useQuery(
 		'login',
 		async () => {
+			store.updateIsLoading(true)
 			const data = getValues()
 			const res = await AuthService.login(data)
 			if (res) {
@@ -70,6 +71,9 @@ export const LoginForm: FC = observer(() => {
 					store.updateIsLoaded(true)
 				}
 			}
+
+			store.updateIsLoading(false)
+
 			return null
 		},
 		{

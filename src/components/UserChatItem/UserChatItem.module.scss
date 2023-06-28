@@ -1,0 +1,10 @@
+.box {
+	@apply flex w-full cursor-pointer rounded-xl p-2;
+
+	&:hover {
+		background-color: var(--color-purple);
+		transition: all 0.5s ease;
+	}
+
+	transition: all 0.5s ease;
+}

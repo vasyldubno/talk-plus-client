@@ -60,6 +60,7 @@ export const RegisterForm: FC = () => {
 	const { refetch } = useQuery(
 		'register',
 		async () => {
+			store.updateIsLoading(true)
 			const data = getValues()
 			const response = await AuthService.register(data)
 			if (response) {
@@ -77,6 +78,7 @@ export const RegisterForm: FC = () => {
 					return router.push('/chat')
 				}
 			}
+			store.updateIsLoading(false)
 			return null
 		},
 		{
