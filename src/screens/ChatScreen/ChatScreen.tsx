@@ -72,6 +72,7 @@ export const ChatScreen: FC = observer(() => {
 			ChatService.getAllChats().then((res) => {
 				setChats(res)
 				setChatsLoaded(true)
+				store.updateIsLoading(false)
 			})
 		}
 	}, [isLoaded, router, store, isLogged])
