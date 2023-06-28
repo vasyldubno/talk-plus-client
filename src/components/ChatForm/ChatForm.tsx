@@ -52,7 +52,12 @@ export const ChatForm: FC<IChatFormProps> = ({
 				afterSubmit()
 			}
 		}
-		inputRef.current?.focus()
+
+		if (isTouchScreen) {
+			inputRef.current?.blur()
+		} else {
+			inputRef.current?.focus()
+		}
 	}
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
