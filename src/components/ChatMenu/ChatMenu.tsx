@@ -2,11 +2,11 @@ import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import { FC } from 'react'
 import { TiThMenu } from 'react-icons/ti'
 import { useRouter } from 'next/router'
+import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
 import { GroupIcon } from '@/icons/GroupIcon'
 import { LogoutIcon } from '@/icons/LogoutIcon'
 import { SettingIcon } from '@/icons/SettingIcon'
-import { AuthService } from '@/services/authService'
 
 interface ChatMenuProps {
 	onClickAddGroup: () => void
@@ -20,11 +20,11 @@ export const ChatMenu: FC<ChatMenuProps> = ({
 	const router = useRouter()
 	const store = useStore()
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
+		await supabase.auth.signOut()
 		store.updateIsLogged(false)
-		store.updateUserId(null)
+		store.updateUsername(null)
 		router.push('/')
-		AuthService.logout()
 	}
 
 	return (

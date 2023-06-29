@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { useQuery } from 'react-query'
 import { useDebounce } from '@/hooks/useDebounce'
-import { UserService } from '@/services/userService'
 import { IUser } from '@/types/types'
 
 interface SearchInputProps {
@@ -26,29 +25,9 @@ export const SearchInput: FC<SearchInputProps> = ({ setUsers, chatId }) => {
 		setSearchValue(e.target.value)
 	}
 
-	useQuery(
-		'subscribers',
-		async () => UserService.retrieveSubscribers(chatId.toString()),
-		{
-			onSuccess(data) {
-				setSubscribers(data)
-			},
-		},
-	)
-
 	useEffect(() => {
 		if (debouncedValue.length >= 3) {
-			UserService.searchUser(debouncedValue).then((res) => {
-				return setUsers(
-					res.filter((r) => {
-						const isExist = subscribers?.some((subs) => subs.id === r.id)
-						if (isExist) {
-							return null
-						}
-						return r
-					}),
-				)
-			})
+			console.log('')
 		}
 	}, [debouncedValue, setUsers, subscribers])
 

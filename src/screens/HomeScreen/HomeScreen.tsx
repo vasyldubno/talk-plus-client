@@ -3,11 +3,9 @@ import clsx from 'clsx'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
-import { Loader } from '@/ui/Loader/Loader'
 
 const welcomeImages = ['/welcome-1.jpg', '/welcome-2.jpg', '/welcome-3.jpg']
 
@@ -20,17 +18,17 @@ export const HomeScreen: FC = observer(() => {
 	const store = useStore()
 	const isLoaded = store.getIsLoaded()
 	const isLogged = store.getIsLogged()
+	const isLoading = store.getIsLoading()
 
 	useEffect(() => {
-		if (isLoaded && isLogged) {
+		if (isLoaded && isLogged && !isLoading) {
 			router.push('/chat')
 		}
-	}, [isLoaded, isLogged, router])
+	}, [isLoaded, isLogged, router, isLoading])
 
 	return (
 		<>
-			{!isLoaded && <Loader />}
-			{isLoaded && !isLogged && (
+			{isLoaded && !isLogged && !isLoading && (
 				<Box className="min-h-screen bg-[var(--color-middle-green)] py-3">
 					<Box
 						className={clsx(
@@ -78,25 +76,6 @@ export const HomeScreen: FC = observer(() => {
 						>
 							Get Started
 						</Button>
-						{/* <Box
-							className={clsx(
-								'flex justify-center text-sm mb-8',
-								xs ? 'flex-col gap-0' : 'flex-row gap-2',
-							)}
-						>
-							<Text
-								className={clsx('text-[var(--color-middle-gray)] text-center')}
-							>
-								Already have an account?
-							</Text>
-							<Link
-								className="text-white hover:scale-105 text-center"
-								href="/login"
-								style={{ transition: 'all 0.5s' }}
-							>
-								Log In
-							</Link>
-						</Box> */}
 						<Text
 							className={clsx(
 								'text-white font-bold text-center mb-8',

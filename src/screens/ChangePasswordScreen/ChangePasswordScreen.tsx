@@ -12,7 +12,6 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { $axios } from '@/config/axiosConfig'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
@@ -45,10 +44,7 @@ export const ChangePasswordScreen = observer(() => {
 	})
 
 	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		return $axios.post('/users/change-password', {
-			password: data.password,
-			email: router.query.email,
-		})
+		console.log('')
 	}
 
 	return (

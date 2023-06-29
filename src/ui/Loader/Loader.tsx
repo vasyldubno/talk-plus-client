@@ -16,7 +16,7 @@ export const Loader: FC = observer(() => {
 	return (
 		<Modal isOpen={isLoading} onClose={() => {}}>
 			<ModalOverlay />
-			<ModalContent bg="transparent">
+			<ModalContent bg="transparent" shadow="none">
 				<Box className="text-center">
 					<GridLoader color="purple" size={100} speedMultiplier={1} />
 				</Box>

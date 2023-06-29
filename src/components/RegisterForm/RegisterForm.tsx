@@ -7,23 +7,19 @@ import {
 	Input,
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
-import { signIn } from 'next-auth/react'
-import { FC, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
 import { z } from 'zod'
-import { useRouter } from 'next/router'
+import { supabase } from '@/config/supabase'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
-import { useStore } from '@/hooks/useStore'
-import { AuthService } from '@/services/authService'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
 
-export const RegisterForm: FC = () => {
-	const [errorMessage, setErrorMessage] = useState<string | undefined>('')
+interface RegisterFormProps {
+	setIsSignUpSuccess: Dispatch<SetStateAction<boolean>>
+}
 
-	const store = useStore()
-	const router = useRouter()
+export const RegisterForm: FC<RegisterFormProps> = ({ setIsSignUpSuccess }) => {
+	const [errorMessage, setErrorMessage] = useState<string | undefined>('')
 
 	const xs = useMatchMedia('(max-width: 390px)')
 
@@ -51,48 +47,35 @@ export const RegisterForm: FC = () => {
 		register,
 		formState: { errors },
 		handleSubmit,
-		getValues,
 	} = useForm<FormSchema>({
 		mode: 'onChange',
 		resolver: zodResolver(formSchema),
 	})
 
-	const { refetch } = useQuery(
-		'register',
-		async () => {
-			store.updateIsLoading(true)
-			const data = getValues()
-			const response = await AuthService.register(data)
-			if (response) {
-				store.updateUserId(response.id.toString())
-				store.updateIsLogged(true)
-				store.updateIsLoaded(true)
-
-				const responseSignIn = await signIn('credentials', {
-					userId: response.id.toString(),
-					accessToken: response.accessToken,
-					redirect: false,
-				})
-
-				if (responseSignIn?.ok) {
-					return router.push('/chat')
-				}
-			}
-			store.updateIsLoading(false)
-			return null
-		},
-		{
-			enabled: false,
-			retry: false,
-			onError(err: AxiosError<{ message: string }>) {
-				console.log(err.response?.data.message)
-				setErrorMessage(err.response?.data.message)
-			},
-		},
-	)
-
 	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		await refetch()
+		const res = await supabase.auth.signUp({
+			email: data.email,
+			password: data.password,
+			options: {
+				emailRedirectTo: process.env.NEXT_PUBLIC_CLIEN_URL,
+				data: {
+					username: data.username,
+					firstName: data.firstName,
+				},
+			},
+		})
+
+		if (res.error) {
+			setErrorMessage(res.error.message)
+		}
+
+		if (res.data.user) {
+			await supabase
+				.from('users')
+				.insert({ username: data.username, firstName: data.firstName })
+
+			setIsSignUpSuccess(true)
+		}
 	}
 
 	return (

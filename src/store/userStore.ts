@@ -3,7 +3,7 @@ import { makeAutoObservable } from 'mobx'
 export class UserStore {
 	private isLogged: boolean
 	private isLoaded: boolean
-	private userId: string | null
+	private username: string | null
 	private timezone: string | null
 	private onlineUsers: number[]
 	private isLoading: boolean
@@ -11,10 +11,10 @@ export class UserStore {
 	constructor() {
 		this.isLogged = false
 		this.isLoaded = false
-		this.userId = null
+		this.username = null
 		this.timezone = null
 		this.onlineUsers = []
-		this.isLoading = false
+		this.isLoading = true
 		makeAutoObservable(this)
 	}
 
@@ -28,8 +28,8 @@ export class UserStore {
 		return null
 	}
 
-	updateUserId(payload: string | null) {
-		this.userId = payload
+	updateUsername(payload: string | null) {
+		this.username = payload
 		return null
 	}
 
@@ -56,8 +56,8 @@ export class UserStore {
 		return this.isLoaded
 	}
 
-	getUserId() {
-		return this.userId
+	getUsername() {
+		return this.username
 	}
 
 	getTimezone() {

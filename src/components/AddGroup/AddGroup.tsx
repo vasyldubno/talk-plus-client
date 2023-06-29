@@ -13,23 +13,19 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
-import { ChatService } from '@/services/chatService'
 import { IChat, ISocket } from '@/types/types'
 import { FileInput } from '@/ui/FileInput/FileInput'
-import { Loader } from '@/ui/Loader/Loader'
 
 interface AddGroupProps {
 	setChats: Dispatch<SetStateAction<IChat[]>>
 	setIsAddGroup: Dispatch<SetStateAction<boolean>>
 	setSelectedChat: Dispatch<SetStateAction<IChat | null>>
-	socket: ISocket | null
 	onClose?: () => void
 }
 
 export const AddGroup: FC<AddGroupProps> = observer(
-	({ setChats, setIsAddGroup, setSelectedChat, socket, onClose }) => {
+	({ setChats, setIsAddGroup, setSelectedChat, onClose }) => {
 		const store = useStore()
-		const userId = store.getUserId()
 		const isLoading = store.getIsLoading()
 
 		const [imageBase64, setImageBase64] = useState('')
@@ -53,32 +49,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 
 		const onSubmit: SubmitHandler<FormSchema> = async (data) => {
 			store.updateIsLoading(true)
-
-			if (userId) {
-				const response = await ChatService.addGroup(
-					data.title,
-					imageBase64,
-					userId,
-				)
-				if (response) {
-					const newChat: IChat = {
-						id: response.data.id,
-						imageUrl: imageBase64,
-						title: data.title,
-						isAdmin: true,
-						type: 'group',
-					}
-
-					if (socket) {
-						socket.emit('join', { room: newChat.title, type: 'group' })
-					}
-
-					setChats((prev) => [newChat, ...prev])
-					setIsAddGroup(false)
-					setSelectedChat(newChat)
-					store.updateIsLoading(false)
-				}
-			}
+			store.updateIsLoading(false)
 		}
 
 		return (

@@ -22,7 +22,6 @@ import { SendIcon } from '@/icons/SendIcon'
 import { ISocket } from '@/types/types'
 
 interface IChatFormProps {
-	socket: ISocket | null
 	room: string
 	roomId: number
 	typeChat: 'chat' | 'group' | undefined
@@ -31,7 +30,6 @@ interface IChatFormProps {
 }
 
 export const ChatForm: FC<IChatFormProps> = ({
-	socket,
 	room,
 	roomId,
 	className,
@@ -42,22 +40,10 @@ export const ChatForm: FC<IChatFormProps> = ({
 	const [isTouchScreen, setIsTouchScreen] = useState(false)
 
 	const store = useStore()
-	const userId = store.getUserId()
 
 	const inputRef = useRef<HTMLInputElement>(null)
 
 	const handleClick = () => {
-		if (socket && userId) {
-			socket.emit('message', {
-				message: value,
-				room,
-				roomId,
-				userId,
-				type: typeChat,
-			})
-			setValue('')
-		}
-
 		if (isTouchScreen) {
 			inputRef.current?.blur()
 		} else {

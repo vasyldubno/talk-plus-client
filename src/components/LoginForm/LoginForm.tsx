@@ -7,24 +7,20 @@ import {
 	Input,
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
 import { observer } from 'mobx-react-lite'
-import { signIn } from 'next-auth/react'
 import { FC, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
 import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { METADATA } from '@/config/metadata'
+import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
-import { AuthService } from '@/services/authService'
 import { DividerWithText } from '@/ui/DividerWithText/DividerWithText'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
 
 export const LoginForm: FC = observer(() => {
-	const [errorEmail, setErrorEmail] = useState<string>('')
-	const [errorPassword, setErrorPassword] = useState<string | undefined>('')
+	const [errorAuth, setErrorAuth] = useState(false)
 
 	const store = useStore()
 	const router = useRouter()
@@ -46,58 +42,31 @@ export const LoginForm: FC = observer(() => {
 		resolver: zodResolver(formSchema),
 	})
 
-	const { refetch } = useQuery(
-		'login',
-		async () => {
-			store.updateIsLoading(true)
-			const data = getValues()
-			const res = await AuthService.login(data)
-			if (res) {
-				const responseSignIn = await signIn('credentials', {
-					userId: res.id.toString(),
-					accessToken: res.accessToken,
-					redirect: false,
-				})
-
-				if (responseSignIn?.ok) {
-					store.updateUserId(res.id.toString())
-					store.updateIsLogged(true)
-					store.updateIsLoaded(true)
-					return router.push('/chat')
-				}
-
-				if (responseSignIn?.error) {
-					store.updateIsLogged(false)
-					store.updateIsLoaded(true)
-				}
-			}
-
-			store.updateIsLoading(false)
-
-			return null
-		},
-		{
-			enabled: false,
-			retry: false,
-			onError(err: AxiosError<{ message: string }>) {
-				if (err.response?.data.message === 'Invalid email') {
-					setErrorEmail('Invalid email')
-				}
-				if (err.response?.data.message === 'Invalid password') {
-					setErrorPassword('Invalid password')
-				}
-			},
-		},
-	)
-
 	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		await refetch()
+		const response = await supabase.auth.signInWithPassword({
+			email: data.email,
+			password: data.password,
+		})
+
+		if (response.error) {
+			setErrorAuth(true)
+		}
+
+		if (response.data.user) {
+			store.updateIsLogged(true)
+			store.updateIsLoaded(true)
+			store.updateUsername(response.data.user.user_metadata.username)
+			router.push('/chat')
+		}
 	}
 
 	return (
 		<>
-			{errorEmail}
-			{errorPassword}
+			{errorAuth && (
+				<p className="text-center text-[var(--color-error)] pb-5">
+					Invalid email or password
+				</p>
+			)}
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				className="flex flex-col gap-3"
@@ -108,7 +77,7 @@ export const LoginForm: FC = observer(() => {
 					<Input
 						type="email"
 						{...register('email')}
-						onChange={() => setErrorEmail('')}
+						onChange={() => setErrorAuth(false)}
 					/>
 					{errors.email && (
 						<FormErrorMessage>{errors.email?.message}</FormErrorMessage>
@@ -121,7 +90,7 @@ export const LoginForm: FC = observer(() => {
 						errors={errors.password}
 						label="Password"
 						name="password"
-						onChange={() => setErrorPassword('')}
+						onChange={() => setErrorAuth(false)}
 					/>
 					<Link
 						href="/forgot-password"

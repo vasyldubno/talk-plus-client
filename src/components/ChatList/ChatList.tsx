@@ -2,9 +2,6 @@ import { ChatItem } from '../ChatItem/ChatItem'
 import { Box } from '@chakra-ui/react'
 import { observer } from 'mobx-react-lite'
 import { Dispatch, FC, SetStateAction } from 'react'
-import { useQuery } from 'react-query'
-import { useStore } from '@/hooks/useStore'
-import { ChatService } from '@/services/chatService'
 import { IChat, IConversation } from '@/types/types'
 
 interface ChatListProps {

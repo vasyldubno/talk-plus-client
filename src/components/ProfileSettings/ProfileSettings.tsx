@@ -5,10 +5,8 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
-import { $axios } from '@/config/axiosConfig'
 import { toastConfig } from '@/config/toastConfig'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
-import { UserService } from '@/services/userService'
 import { FileInput } from '@/ui/FileInput/FileInput'
 
 interface ProfileSettingsProps {
@@ -30,16 +28,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 		mode: 'onChange',
 	})
 
-	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		return $axios.post('/users/change-profile-avatar', { image: imageBase64 })
-	}
-
-	useQuery('profile', async () => UserService.getUser(), {
-		onSuccess(data) {
-			setImageBase64(data.data.avatar)
-			setValue('userName', data.data.userName)
-		},
-	})
+	const onSubmit: SubmitHandler<FormSchema> = async (data) => {}
 
 	const handleSaveChanges = () => {
 		toast.success('Changes successful applied', toastConfig)

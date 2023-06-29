@@ -8,7 +8,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { $axios } from '@/config/axiosConfig'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { Container } from '@/ui/Container/Container'
 import { Loader } from '@/ui/Loader/Loader'
@@ -32,7 +31,7 @@ export const ForgotPasswordScreen = () => {
 	})
 
 	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		return $axios.post('/users/forgot-password', { email: data.email })
+		console.log('')
 	}
 
 	return (

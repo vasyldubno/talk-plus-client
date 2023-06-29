@@ -14,13 +14,11 @@ import {
 import { observer } from 'mobx-react-lite'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import Image from 'next/image'
-import { $axios } from '@/config/axiosConfig'
 import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
 import { BinIcon } from '@/icons/BinIcon'
 import { ThreeDotsIcon } from '@/icons/ThreeDotsIcon'
 import { UserIcon } from '@/icons/UserIcon'
-import { ChatService } from '@/services/chatService'
 import { IChat, IConversation, ISocket, IUser } from '@/types/types'
 import { SearchInput } from '@/ui/SearchInput/SearchInput'
 
@@ -30,66 +28,15 @@ interface ChatHeaderProps {
 	setSelectedChat: Dispatch<SetStateAction<IChat | null>>
 	setConversations: Dispatch<SetStateAction<IConversation[]>>
 	onClickBack: () => void
-	socket: ISocket | null
 }
 
 export const ChatHeader: FC<ChatHeaderProps> = observer(
-	({
-		chat,
-		setChats,
-		setSelectedChat,
-		setConversations,
-		onClickBack,
-		socket,
-	}) => {
+	({ chat, setChats, setSelectedChat, setConversations, onClickBack }) => {
 		const [isAddNewUser, setIsAddNewUser] = useState(false)
 		const [users, setUsers] = useState<IUser[] | null>(null)
 		const [selectedUsers, setSelectedUsers] = useState<IUser[] | null>(null)
 
 		const store = useStore()
-
-		const handleDeleteGroup = () => {
-			store.updateIsLoading(true)
-			// setChats((prev) => prev.filter((c) => c.title !== chat.title))
-			setConversations((prev) => prev.filter((c) => c.room !== chat.title))
-			if (socket) {
-				socket.emit('delete-group', {
-					title: chat.title,
-					groupId: chat.id.toString(),
-				})
-			}
-			setSelectedChat(null)
-			// store.updateIsLoading(false)
-		}
-
-		const handleIsAddNewUser = () => {
-			setIsAddNewUser(true)
-		}
-
-		const handleClickAddNewUsers = () => {
-			selectedUsers?.forEach((user) => {
-				socket?.emit('subscribe-group', {
-					idGroup: chat.id.toString(),
-					nameGroup: chat.title,
-					userId: user.id.toString(),
-				})
-			})
-			setIsAddNewUser(false)
-			setUsers(null)
-		}
-
-		const handleLeaveGroup = () => {
-			setChats((prev) => prev.filter((c) => c.title !== chat.title))
-			setSelectedChat(null)
-			return ChatService.leaveGroup(chat.id)
-		}
-
-		const handleDeleteChat = () => {
-			if (socket) {
-				socket.emit('deleteChat', { chatId: chat.id.toString() })
-				store.updateIsLoading(true)
-			}
-		}
 
 		return (
 			<>
@@ -130,7 +77,6 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
-										onClick={handleIsAddNewUser}
 									>
 										<Box className="flex items-center">
 											<UserIcon height="1rem" width="1rem" fill="black" />
@@ -143,7 +89,6 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
-										onClick={handleDeleteGroup}
 									>
 										<Box className="flex items-center">
 											<BinIcon height="1rem" width="1rem" fill="black" />
@@ -156,7 +101,6 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
-										onClick={handleLeaveGroup}
 									>
 										<Box className="flex items-center">
 											<BinIcon height="1rem" width="1rem" fill="black" />
@@ -169,7 +113,6 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
-										onClick={handleDeleteChat}
 									>
 										<Box className="flex items-center">
 											<BinIcon height="1rem" width="1rem" fill="black" />
@@ -201,9 +144,7 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 									setSelectedUsers={setSelectedUsers}
 								/>
 							))}
-						<Button className="mt-5" onClick={handleClickAddNewUsers}>
-							Add
-						</Button>
+						<Button className="mt-5">Add</Button>
 					</ModalContent>
 				</Modal>
 			</>

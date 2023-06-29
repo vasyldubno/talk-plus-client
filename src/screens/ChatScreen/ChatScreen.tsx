@@ -13,12 +13,9 @@ import { ChatMenu } from '@/components/ChatMenu/ChatMenu'
 import { ChatSearchInput } from '@/components/ChatSearchInput/ChatSearchInput'
 import { ProfileSettings } from '@/components/ProfileSettings/ProfileSettings'
 import { UserChatItem } from '@/components/UserChatItem/UserChatItem'
-import { authTokenStore } from '@/config/axiosConfig'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
-import { ChatService } from '@/services/chatService'
-import { UserService } from '@/services/userService'
 import { IChat, IConversation, ISocket } from '@/types/types'
 import { Loader } from '@/ui/Loader/Loader'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
@@ -29,8 +26,6 @@ import { socketOnChat } from '@/utils/socketOnChat'
 
 export const ChatScreen: FC = observer(() => {
 	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
-	const [socket, setSocket] = useState<ISocket | null>(null)
-	const [socketError, setSocketError] = useState('')
 	const [conversations, setConversations] = useState<IConversation[]>([])
 	const [isAddGroup, setIsAddGroup] = useState(false)
 	const [isProfileSettings, setIsProfileSettings] = useState(false)
@@ -53,110 +48,16 @@ export const ChatScreen: FC = observer(() => {
 	const isLogged = store.getIsLogged()
 	const isLoaded = store.getIsLoaded()
 	const isLoading = store.getIsLoading()
-	const userId = store.getUserId()
 
 	useEffect(() => {
 		if (isLoaded && !isLogged) {
 			router.push('/')
 		}
-
-		if (isLoaded) {
-			const newSocket: ISocket = io(
-				`${process.env.NEXT_PUBLIC_SERVER_URL}/chat`,
-				{
-					extraHeaders: { authorization: `Bearer ${authTokenStore.authToken}` },
-					secure: true,
-				},
-			)
-			setSocket(newSocket)
-			ChatService.getAllChats().then((res) => {
-				setChats(res)
-				setChatsLoaded(true)
-				store.updateIsLoading(false)
-			})
-		}
-	}, [isLoaded, router, store, isLogged])
-
-	useEffect(() => {
-		if (socket) {
-			socketOnChat(socket, setChats, setSelectedChat, store)
-
-			// socket.emit('allChats')
-
-			socket.on('allChats', (payload) => {
-				setChats(payload)
-				store.updateIsLoading(false)
-			})
-
-			socket.on('onlineUsers', (payload) => {
-				store.updateOnlineUsers(
-					payload.onlineUsers.filter((onlineUser) => onlineUser !== null),
-				)
-			})
-		}
-	}, [socket, store])
-
-	useEffect(() => {
-		if (socket) {
-			socketMessage(
-				socket,
-				setConversations,
-				chatFeedRef,
-				selectedChat,
-				setChats,
-			)
-		}
-	}, [socket, selectedChat])
-
-	useEffect(() => {
-		if (socket && chatsLoaded) {
-			socket.on('connect_error', (error) => {
-				setSocketError(error.message)
-			})
-
-			chats.forEach((chat) => {
-				socket.emit('join', { room: chat.title, type: chat.type })
-
-				ChatService.getMessages({
-					page: 1,
-					chatId: chat.id,
-					type: chat.type,
-				}).then((messages) => {
-					setConversations((prev) => {
-						const isExistConversation = prev.find(
-							(conversation) => Number(conversation.id) === Number(chat.id),
-						)
-
-						if (!isExistConversation) {
-							const newConversation: IConversation = {
-								id: chat.id,
-								room: chat.title,
-								messages,
-							}
-							return [...prev, newConversation]
-						}
-
-						return prev
-					})
-				})
-			})
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [socket, chatsLoaded])
+	}, [isLoaded, isLogged, router])
 
 	useEffect(() => {
 		if (debouncedValue.length >= 3) {
-			UserService.searchUser(debouncedValue).then((usersList) => {
-				setUsers(
-					usersList.map((user) => ({
-						id: user.id,
-						title: user.profile.firstName,
-						imageUrl: user.profile?.avatar
-							? user.profile.avatar
-							: 'https://res.cloudinary.com/dtkchspyx/image/upload/v1686323806/talk-plus/empty-user-image_tzkax8.png',
-					})),
-				)
-			})
+			console.log('')
 		} else {
 			setUsers([])
 		}
@@ -202,47 +103,12 @@ export const ChatScreen: FC = observer(() => {
 	}
 
 	const handleUserFromSearch = (user: IChat) => {
-		store.updateIsLoading(true)
-		const existedChat = chats.find((c) => c.title === user.title)
-
-		if (existedChat) {
-			setSearchValue('')
-			setChats((prev) => {
-				const index = prev.findIndex((i) => i.id === existedChat.id)
-				const chat = prev.splice(index, 1)[0]
-				return [chat, ...prev]
-			})
-			setSelectedChat({
-				id: existedChat.id,
-				imageUrl: user.imageUrl,
-				title: user.title,
-				type: user.type ? 'group' : 'chat',
-			})
-		} else {
-			try {
-				if (socket) {
-					socket.emit('join', { room: user.title, type: 'chat' })
-
-					socket.emit('chat', {
-						title: user.title,
-						imageSrc: user.imageUrl,
-						guestUserId: user.id,
-						type: 'chat',
-					})
-
-					setSearchValue('')
-				}
-			} catch (e) {
-				console.log('Error with socket connection')
-			}
-		}
+		console.log(user)
 	}
 
 	return (
 		<>
-			{isLoading && <Loader />}
-			{socketError && <p>{socketError}</p>}
-			{isLogged && isLoaded && !socketError && (
+			{isLogged && isLoaded && (
 				<Box className="flex">
 					{isAddGroup &&
 						!selectedChat &&
@@ -253,7 +119,6 @@ export const ChatScreen: FC = observer(() => {
 									setChats={setChats}
 									setIsAddGroup={setIsAddGroup}
 									setSelectedChat={setSelectedChat}
-									socket={socket}
 									onClose={() => {
 										setIsOpenLeftSide(true)
 										setIsOpenRightSide(false)
@@ -329,14 +194,12 @@ export const ChatScreen: FC = observer(() => {
 								setChats={setChats}
 								setIsAddGroup={setIsAddGroup}
 								setSelectedChat={setSelectedChat}
-								socket={socket}
 							/>
 						)}
 						{isProfileSettings && !selectedChat && <ProfileSettings />}
 						{selectedChat && (
 							<Box className="flex flex-col pb-3 h-[100vh] w-full">
 								<ChatHeader
-									socket={socket}
 									chat={selectedChat}
 									setChats={setChats}
 									setSelectedChat={setSelectedChat}
@@ -357,7 +220,6 @@ export const ChatScreen: FC = observer(() => {
 									ref={chatFeedRef}
 								/>
 								<ChatForm
-									socket={socket}
 									room={selectedChat.title}
 									roomId={selectedChat.id}
 									typeChat={selectedChat.type}
