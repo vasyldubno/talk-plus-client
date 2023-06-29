@@ -28,7 +28,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 		mode: 'onChange',
 	})
 
-	const onSubmit: SubmitHandler<FormSchema> = async (data) => {}
+	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
+		console.log(data)
+	}
 
 	const handleSaveChanges = () => {
 		toast.success('Changes successful applied', toastConfig)
