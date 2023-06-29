@@ -17,12 +17,12 @@ interface MessageProps {
 export const Message = observer(
 	forwardRef<HTMLDivElement, MessageProps>(({ message, chatType }, ref) => {
 		const store = useStore()
-		const userId = store.getUserId()
+		// const userId = store.getUserId()
 		const onlineUsers = store.getOnlineUsers()
 
-		const isAdmin = () => {
-			return userId === message.author.id.toString()
-		}
+		// const isAdmin = () => {
+		// 	return userId === message.author.id.toString()
+		// }
 
 		const isOnline = onlineUsers.includes(message.author.id)
 
@@ -30,7 +30,7 @@ export const Message = observer(
 			<Box
 				className={clsx(
 					'flex gap-2',
-					isAdmin() ? '' : 'ml-auto flex-row-reverse',
+					// isAdmin() ? '' : 'ml-auto flex-row-reverse',
 					chatType === 'chat' ? 'w-full md:w-[70%]' : 'w-[90%] lg:w-[100%]',
 				)}
 				ref={ref}
@@ -61,7 +61,7 @@ export const Message = observer(
 				<Box
 					className={clsx(
 						'text-gray-200 p-2 rounded-xl relative w-full',
-						isAdmin() ? `bg-[#b5a3a3]` : `bg-[#f7b665]`,
+						// isAdmin() ? `bg-[#b5a3a3]` : `bg-[#f7b665]`,
 					)}
 				>
 					<Text className="text-white text-sm">{message.author.firstName}</Text>
