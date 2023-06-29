@@ -19,10 +19,6 @@ import { useStore } from '@/hooks/useStore'
 import { IChat, IConversation, ISocket } from '@/types/types'
 import { Loader } from '@/ui/Loader/Loader'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
-import { moveChatToTop } from '@/utils/moveChatToTop'
-import { scrollToBottom } from '@/utils/scrollToBottom'
-import { socketMessage } from '@/utils/socketMessage'
-import { socketOnChat } from '@/utils/socketOnChat'
 
 export const ChatScreen: FC = observer(() => {
 	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
