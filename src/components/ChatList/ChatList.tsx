@@ -39,9 +39,9 @@ export const ChatList: FC<ChatListProps> = observer(
 						{!searchValue &&
 							chats.map((chat) => (
 								<ChatItem
-									key={`${chat.id}-${chat.type}`}
+									key={chat.id}
 									chat={chat}
-									selectedChat={`${selectedChat?.id}-${selectedChat?.type}`}
+									selectedChat={selectedChat?.id}
 									onClick={() => {
 										// console.log('onClick')
 										setSelectedChat(chat)

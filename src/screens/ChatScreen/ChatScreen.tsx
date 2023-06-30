@@ -13,9 +13,11 @@ import { ChatMenu } from '@/components/ChatMenu/ChatMenu'
 import { ChatSearchInput } from '@/components/ChatSearchInput/ChatSearchInput'
 import { ProfileSettings } from '@/components/ProfileSettings/ProfileSettings'
 import { UserChatItem } from '@/components/UserChatItem/UserChatItem'
+import { supabase } from '@/config/supabase'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
+import { ChatService } from '@/services/chatService'
 import { IChat, IConversation, ISocket } from '@/types/types'
 import { Loader } from '@/ui/Loader/Loader'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
@@ -23,12 +25,12 @@ import { getCurrentConversation } from '@/utils/getCurrentConversation'
 export const ChatScreen: FC = observer(() => {
 	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
 	const [conversations, setConversations] = useState<IConversation[]>([])
-	const [isAddGroup, setIsAddGroup] = useState(false)
-	const [isProfileSettings, setIsProfileSettings] = useState(false)
 	const [chats, setChats] = useState<IChat[]>([])
-	const [chatsLoaded, setChatsLoaded] = useState(false)
 	const [searchValue, setSearchValue] = useState('')
 	const [users, setUsers] = useState<IChat[]>([])
+	const [isAddGroup, setIsAddGroup] = useState(false)
+	const [isProfileSettings, setIsProfileSettings] = useState(false)
+	const [chatsLoaded, setChatsLoaded] = useState(false)
 	const [isOpenLeftSide, setIsOpenLeftSide] = useState(true)
 	const [isOpenRightSide, setIsOpenRightSide] = useState(true)
 
@@ -44,12 +46,68 @@ export const ChatScreen: FC = observer(() => {
 	const isLogged = store.getIsLogged()
 	const isLoaded = store.getIsLoaded()
 	const isLoading = store.getIsLoading()
+	const username = store.getUsername()
+	const userId = store.getUserId()
 
 	useEffect(() => {
 		if (isLoaded && !isLogged) {
 			router.push('/')
 		}
-	}, [isLoaded, isLogged, router])
+
+		if (isLoaded && isLogged) {
+			ChatService.getAllChats(userId, setChats).then((res) =>
+				setChatsLoaded(true),
+			)
+
+			supabase
+				.channel('chats-insert')
+				.on(
+					'postgres_changes',
+					{
+						event: 'INSERT',
+						schema: 'public',
+						table: 'chats',
+					},
+					(payload) => {
+						console.log(payload)
+						if (userId === payload.new.admin_id) {
+							ChatService.addMember(userId, payload.new.id)
+							setChats((prev) => {
+								const updatedChats: IChat[] = [
+									{
+										id: payload.new.id,
+										cover: payload.new.cover,
+										created_at: payload.new.created_at,
+										title: payload.new.title,
+										type: payload.new.type,
+										isAdmin: true,
+									},
+									...prev,
+								]
+								return updatedChats
+							})
+						}
+					},
+				)
+				.subscribe()
+
+			supabase
+				.channel('chats-delete')
+				.on(
+					'postgres_changes',
+					{ event: 'DELETE', schema: 'public', table: 'chats' },
+					(payload) => {
+						setChats((prev) => {
+							const updatedChats: IChat[] = prev.filter(
+								(chat) => chat.id !== payload.old.id,
+							)
+							return updatedChats
+						})
+					},
+				)
+				.subscribe()
+		}
+	}, [isLoaded, isLogged, router, username, userId])
 
 	useEffect(() => {
 		if (debouncedValue.length >= 3) {
@@ -101,6 +159,8 @@ export const ChatScreen: FC = observer(() => {
 	const handleUserFromSearch = (user: IChat) => {
 		console.log(user)
 	}
+
+	console.log('CHATS', chats)
 
 	return (
 		<>
@@ -218,7 +278,7 @@ export const ChatScreen: FC = observer(() => {
 								<ChatForm
 									room={selectedChat.title}
 									roomId={selectedChat.id}
-									typeChat={selectedChat.type}
+									// typeChat={selectedChat.type}
 									className="relative bottom-0"
 									afterSubmit={() => {
 										// scrollToBottom(chatFeedRef)

@@ -4,6 +4,7 @@ export class UserStore {
 	private isLogged: boolean
 	private isLoaded: boolean
 	private username: string | null
+	private userId: string | null
 	private timezone: string | null
 	private onlineUsers: number[]
 	private isLoading: boolean
@@ -12,6 +13,7 @@ export class UserStore {
 		this.isLogged = false
 		this.isLoaded = false
 		this.username = null
+		this.userId = null
 		this.timezone = null
 		this.onlineUsers = []
 		this.isLoading = true
@@ -48,6 +50,11 @@ export class UserStore {
 		return null
 	}
 
+	updateUserId(payload: string) {
+		this.userId = payload
+		return null
+	}
+
 	getIsLogged() {
 		return this.isLogged
 	}
@@ -70,5 +77,9 @@ export class UserStore {
 
 	getIsLoading() {
 		return this.isLoading
+	}
+
+	getUserId() {
+		return this.userId
 	}
 }

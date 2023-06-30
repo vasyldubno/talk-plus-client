@@ -57,7 +57,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ setIsSignUpSuccess }) => {
 			email: data.email,
 			password: data.password,
 			options: {
-				emailRedirectTo: process.env.NEXT_PUBLIC_CLIEN_URL,
+				emailRedirectTo: `${process.env.NEXT_PUBLIC_CLIEN_URL}/login`,
 				data: {
 					username: data.username,
 					firstName: data.firstName,
@@ -70,9 +70,11 @@ export const RegisterForm: FC<RegisterFormProps> = ({ setIsSignUpSuccess }) => {
 		}
 
 		if (res.data.user) {
-			await supabase
-				.from('users')
-				.insert({ username: data.username, firstName: data.firstName })
+			await supabase.from('users').insert({
+				id: res.data.user.id,
+				username: data.username,
+				firstName: data.firstName,
+			})
 
 			setIsSignUpSuccess(true)
 		}

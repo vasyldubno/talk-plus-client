@@ -7,7 +7,7 @@ import { formatUTCDate } from '@/utils/formatUTCDate'
 
 interface ChatItemProps {
 	chat: IChat
-	selectedChat: string | undefined
+	selectedChat: number | undefined
 	onClick: () => void
 	conversation: IConversation | undefined
 }
@@ -25,7 +25,10 @@ export const ChatItem: FC<ChatItemProps> = ({
 	}
 
 	const isSelectedChat = () => {
-		return selectedChat === `${chat.id}-${chat.type}`
+		if (selectedChat) {
+			return selectedChat === chat.id
+		}
+		return false
 	}
 
 	return (
@@ -37,7 +40,7 @@ export const ChatItem: FC<ChatItemProps> = ({
 			onClick={onClick}
 		>
 			<Image
-				src={chat.imageUrl}
+				src={chat.cover}
 				alt={chat.title}
 				width="auto"
 				height="70px"

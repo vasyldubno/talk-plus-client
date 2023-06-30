@@ -24,7 +24,7 @@ import { ISocket } from '@/types/types'
 interface IChatFormProps {
 	room: string
 	roomId: number
-	typeChat: 'chat' | 'group' | undefined
+	// typeChat: 'chat' | 'group' | undefined
 	className?: string
 	afterSubmit: () => void
 }
@@ -33,7 +33,7 @@ export const ChatForm: FC<IChatFormProps> = ({
 	room,
 	roomId,
 	className,
-	typeChat,
+	// typeChat,
 	afterSubmit,
 }) => {
 	const [value, setValue] = useState('')

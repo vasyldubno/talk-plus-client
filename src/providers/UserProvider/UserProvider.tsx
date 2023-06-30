@@ -21,6 +21,7 @@ export const UserProvider: FC<{
 				store.updateIsLoaded(true)
 				store.updateIsLogged(true)
 				store.updateUsername(res.data.user.user_metadata.username)
+				store.updateUserId(res.data.user.id)
 				store.updateIsLoading(false)
 			}
 		})

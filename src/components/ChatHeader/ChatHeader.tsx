@@ -11,9 +11,11 @@ import {
 	ModalOverlay,
 	Text,
 } from '@chakra-ui/react'
+import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import Image from 'next/image'
+import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
 import { BinIcon } from '@/icons/BinIcon'
@@ -38,6 +40,26 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 
 		const store = useStore()
 
+		const handleDeleteGroup = async () => {
+			store.updateIsLoading(true)
+			const responseDeleteImage = await axios.post(
+				'/api/cloudinary/delete-image',
+				{
+					imageUrl: chat.cover,
+				},
+			)
+			if (responseDeleteImage) {
+				const responseDeleteGroup = await supabase
+					.from('chats')
+					.delete()
+					.eq('id', chat.id)
+				if (responseDeleteGroup.status === 204) {
+					store.updateIsLoading(false)
+					setSelectedChat(null)
+				}
+			}
+		}
+
 		return (
 			<>
 				<Box className="flex p-3 items-center border-b-[1px] border-gray-400 top-0 relative justify-between mb-2 bg-[var(--color-middle-gray)]">
@@ -48,9 +70,9 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 						>
 							<ArrowLeftIcon size="2rem" />
 						</Box>
-						{chat.imageUrl ? (
+						{chat.cover ? (
 							<Image
-								src={chat.imageUrl}
+								src={chat.cover}
 								alt={chat.title}
 								width={40}
 								height={40}
@@ -90,7 +112,10 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										paddingTop={1}
 										paddingBottom={1}
 									>
-										<Box className="flex items-center">
+										<Box
+											className="flex items-center"
+											onClick={handleDeleteGroup}
+										>
 											<BinIcon height="1rem" width="1rem" fill="black" />
 											<Text className="ml-2">Delete & Leave group</Text>
 										</Box>

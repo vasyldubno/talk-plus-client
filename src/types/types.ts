@@ -37,10 +37,10 @@ export interface IUser {
 export interface IChat {
 	id: number
 	title: string
-	imageUrl: string
-	updatedAt?: string
-	isAdmin?: boolean
-	type?: 'group' | 'chat'
+	cover: string
+	isAdmin: boolean
+	created_at: string
+	type: 'group' | 'chat'
 }
 
 interface ISocketMessage {
