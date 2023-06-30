@@ -71,9 +71,9 @@ export const ChatScreen: FC = observer(() => {
 					(payload) => {
 						console.log(payload)
 						if (userId === payload.new.admin_id) {
-							if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL) {
-								ChatService.addMember(userId, payload.new.id)
-							}
+							// if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL) {
+							// 	ChatService.addMember(userId, payload.new.id)
+							// }
 							setChats((prev) => {
 								const updatedChats: IChat[] = [
 									{
