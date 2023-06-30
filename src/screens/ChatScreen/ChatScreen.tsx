@@ -71,7 +71,7 @@ export const ChatScreen: FC = observer(() => {
 					(payload) => {
 						console.log(payload)
 						if (userId === payload.new.admin_id) {
-							ChatService.addMember(userId, payload.new.id)
+							// ChatService.addMember(userId, payload.new.id)
 							// const aaa = async () => {
 							// 	const res = await supabase
 							// 		.from('members')
