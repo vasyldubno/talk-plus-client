@@ -69,23 +69,21 @@ export const ChatScreen: FC = observer(() => {
 						table: 'chats',
 					},
 					(payload) => {
-						console.log(payload)
 						if (userId === payload.new.admin_id) {
-							// ChatService.addMember(userId, payload.new.id)
-							// const aaa = async () => {
-							// 	const res = await supabase
-							// 		.from('members')
-							// 		.select()
-							// 		.eq('user_id', userId)
-							// 		.eq('chat_id', payload.new.id)
-							// 	if (res.data?.length === 0) {
-							// 		await supabase
-							// 			.from('members')
-							// 			.insert({ user_id: userId, chat_id: payload.new.id })
-							// 	}
-							// }
+							const addMember = async () => {
+								const res = await supabase
+									.from('members')
+									.select()
+									.eq('user_id', userId)
+									.eq('chat_id', payload.new.id)
+								if (res.data?.length === 0) {
+									await supabase
+										.from('members')
+										.insert({ user_id: userId, chat_id: payload.new.id })
+								}
+							}
 
-							// aaa()
+							addMember()
 
 							setChats((prev) => {
 								const updatedChats: IChat[] = [
