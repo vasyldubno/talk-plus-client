@@ -18,7 +18,6 @@ export class ChatService {
 					.single()
 
 				if (responseChat) {
-					console.log(responseChat.data)
 					const newChat: IChat = {
 						cover: responseChat.data.cover,
 						created_at: responseChat.data.created_at,
