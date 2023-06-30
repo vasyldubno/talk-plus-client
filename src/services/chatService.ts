@@ -42,6 +42,7 @@ export class ChatService {
 			await supabase
 				.from('members')
 				.insert({ user_id: userId, chat_id: chatId })
+				.select()
 		}
 	}
 }
