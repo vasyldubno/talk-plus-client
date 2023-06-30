@@ -25,9 +25,9 @@ export const UserChatItem: FC<UserChatItemProps> = ({
 				)}
 				onClick={onClick}
 			>
-				{chat.imageUrl ? (
+				{chat.cover ? (
 					<Image
-						src={chat.imageUrl}
+						src={chat.cover}
 						alt={chat.title}
 						width="auto"
 						height="70px"
