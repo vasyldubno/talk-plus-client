@@ -71,6 +71,9 @@ export const AddGroup: FC<AddGroupProps> = observer(
 			if (newGroup.status === 201) {
 				store.updateIsLoading(false)
 				setIsAddGroup(false)
+				if (onClose) {
+					onClose()
+				}
 			}
 		}
 

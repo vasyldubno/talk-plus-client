@@ -71,7 +71,7 @@ export const ChatScreen: FC = observer(() => {
 					(payload) => {
 						console.log(payload)
 						if (userId === payload.new.admin_id) {
-							ChatService.addMember(userId, payload.new.id)
+							// ChatService.addMember(userId, payload.new.id)
 							setChats((prev) => {
 								const updatedChats: IChat[] = [
 									{
@@ -161,6 +161,8 @@ export const ChatScreen: FC = observer(() => {
 	}
 
 	console.log('CHATS', chats)
+	console.log('IS_OPEN_LEFT_SIDE', isOpenLeftSide)
+	console.log('IS_OPEN_RIGHT_SIDE', isOpenRightSide)
 
 	return (
 		<>

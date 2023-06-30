@@ -16,6 +16,7 @@ import { observer } from 'mobx-react-lite'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import Image from 'next/image'
 import { supabase } from '@/config/supabase'
+import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
 import { BinIcon } from '@/icons/BinIcon'
@@ -40,6 +41,8 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 
 		const store = useStore()
 
+		const screenTo1024px = useMatchMedia('(max-width: 1024px)')
+
 		const handleDeleteGroup = async () => {
 			store.updateIsLoading(true)
 			const responseDeleteImage = await axios.post(
@@ -56,6 +59,9 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 				if (responseDeleteGroup.status === 204) {
 					store.updateIsLoading(false)
 					setSelectedChat(null)
+					if (screenTo1024px) {
+						onClickBack()
+					}
 				}
 			}
 		}
