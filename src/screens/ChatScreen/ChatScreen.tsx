@@ -70,20 +70,20 @@ export const ChatScreen: FC = observer(() => {
 					},
 					(payload) => {
 						if (userId === payload.new.admin_id) {
-							const addMember = async () => {
-								const res = await supabase
-									.from('members')
-									.select()
-									.eq('user_id', userId)
-									.eq('chat_id', payload.new.id)
-								if (res.data?.length === 0) {
-									await supabase
-										.from('members')
-										.insert({ user_id: userId, chat_id: payload.new.id })
-								}
-							}
+							// const addMember = async () => {
+							// 	const res = await supabase
+							// 		.from('members')
+							// 		.select()
+							// 		.eq('user_id', userId)
+							// 		.eq('chat_id', payload.new.id)
+							// 	if (res.data?.length === 0) {
+							// 		await supabase
+							// 			.from('members')
+							// 			.insert({ user_id: userId, chat_id: payload.new.id })
+							// 	}
+							// }
 
-							addMember()
+							// addMember()
 
 							setChats((prev) => {
 								const updatedChats: IChat[] = [

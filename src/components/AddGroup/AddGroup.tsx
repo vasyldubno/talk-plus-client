@@ -18,6 +18,7 @@ import { z } from 'zod'
 import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
+import { ChatService } from '@/services/chatService'
 import { IChat, ISocket } from '@/types/types'
 import { FileInput } from '@/ui/FileInput/FileInput'
 
@@ -32,6 +33,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 	({ setChats, setIsAddGroup, setSelectedChat, onClose }) => {
 		const store = useStore()
 		const isLoading = store.getIsLoading()
+		const userId = store.getUserId()
 
 		const [imageBase64, setImageBase64] = useState('')
 
@@ -61,14 +63,23 @@ export const AddGroup: FC<AddGroupProps> = observer(
 
 			const user = await supabase.auth.getUser()
 
-			const newGroup = await supabase.from('chats').insert({
-				title: data.title,
-				admin_id: user.data.user?.id,
-				cover: response.data.imageUrl,
-				type: 'group',
-			})
+			const newGroup = await supabase
+				.from('chats')
+				.insert({
+					title: data.title,
+					admin_id: user.data.user?.id,
+					cover: response.data.imageUrl,
+					type: 'group',
+				})
+				.select()
+				.single()
 
 			if (newGroup.status === 201) {
+				console.log(newGroup)
+				// const currentGroup = await supabase.from('chats').select().eq('title', data.title)
+				if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'TRUE') {
+					ChatService.addMember(userId, newGroup.data.id)
+				}
 				store.updateIsLoading(false)
 				setIsAddGroup(false)
 				if (onClose) {
