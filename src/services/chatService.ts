@@ -33,7 +33,12 @@ export class ChatService {
 	}
 
 	static async addMember(userId: string | null, chatId: string) {
-		if (userId) {
+		const res = await supabase
+			.from('members')
+			.select()
+			.eq('user_id', userId)
+			.eq('chat_id', chatId)
+		if (res.data?.length === 0) {
 			await supabase
 				.from('members')
 				.insert({ user_id: userId, chat_id: chatId })

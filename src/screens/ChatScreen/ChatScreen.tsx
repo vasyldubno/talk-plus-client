@@ -71,9 +71,22 @@ export const ChatScreen: FC = observer(() => {
 					(payload) => {
 						console.log(payload)
 						if (userId === payload.new.admin_id) {
-							// if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL) {
-							// 	ChatService.addMember(userId, payload.new.id)
+							ChatService.addMember(userId, payload.new.id)
+							// const aaa = async () => {
+							// 	const res = await supabase
+							// 		.from('members')
+							// 		.select()
+							// 		.eq('user_id', userId)
+							// 		.eq('chat_id', payload.new.id)
+							// 	if (res.data?.length === 0) {
+							// 		await supabase
+							// 			.from('members')
+							// 			.insert({ user_id: userId, chat_id: payload.new.id })
+							// 	}
 							// }
+
+							// aaa()
+
 							setChats((prev) => {
 								const updatedChats: IChat[] = [
 									{
