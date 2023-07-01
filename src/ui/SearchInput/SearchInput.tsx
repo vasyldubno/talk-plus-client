@@ -13,7 +13,7 @@ import { IUser } from '@/types/types'
 
 interface SearchInputProps {
 	setUsers: Dispatch<SetStateAction<IUser[] | null>>
-	chatId: number
+	chatId: string
 }
 
 export const SearchInput: FC<SearchInputProps> = ({ setUsers, chatId }) => {
