@@ -56,6 +56,7 @@ export const LoginForm: FC = observer(() => {
 			store.updateIsLogged(true)
 			store.updateIsLoaded(true)
 			store.updateUsername(response.data.user.user_metadata.username)
+			store.updateUserId(response.data.user.id)
 			router.push('/chat')
 		}
 	}

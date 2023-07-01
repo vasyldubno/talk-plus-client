@@ -6,19 +6,16 @@ type Prettify<T> = {
 
 export interface IMessage {
 	id: string
-	message: string
+	content: string
 	author: {
-		avatar: string
-		id: number
 		firstName: string
 	}
 	createdAt: string
-	updatedAt: string
 }
 
 export interface IConversation {
-	id: number
-	room: string
+	id: string | undefined
+	title: string | undefined
 	messages: IMessage[]
 }
 
@@ -35,11 +32,12 @@ export interface IUser {
 }
 
 export interface IChat {
-	id: number
+	id: string
 	title: string
 	cover: string
 	isAdmin: boolean
 	created_at: string
+	updated_at: string
 	type: 'group' | 'chat'
 }
 

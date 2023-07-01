@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import axios from 'axios'
 import { observer } from 'mobx-react-lite'
 import { FC, ReactNode, useEffect } from 'react'
 import { supabase } from '@/config/supabase'
@@ -10,6 +11,9 @@ export const UserProvider: FC<{
 	children: ReactNode
 }> = observer(({ children, store }) => {
 	useEffect(() => {
+		axios
+			.get('https://ipapi.co/json/')
+			.then((res) => store.updateTimezone(res.data.timezone))
 		supabase.auth.getUser().then((res) => {
 			if (res.error) {
 				store.updateIsLoaded(true)

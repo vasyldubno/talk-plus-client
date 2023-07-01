@@ -49,6 +49,7 @@
 		"react/require-default-props": "off",
 		"react/no-array-index-key": "off",
 		"lines-between-class-members": "off",
-		"@typescript-eslint/no-unused-vars": "off"
+		"@typescript-eslint/no-unused-vars": "off",
+		"no-plusplus": "off"
 	}
 }

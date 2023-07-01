@@ -23,8 +23,9 @@ export const Message = observer(
 		// const isAdmin = () => {
 		// 	return userId === message.author.id.toString()
 		// }
+		const isAdmin = () => false
 
-		const isOnline = onlineUsers.includes(message.author.id)
+		// const isOnline = onlineUsers.includes(message.author.id)
 
 		return (
 			<Box
@@ -36,15 +37,16 @@ export const Message = observer(
 				ref={ref}
 			>
 				<Box className="h-10 w-10 self-end flex-shrink-0 relative">
-					{message.author.avatar ? (
+					{/* {message.author.avatar ? (
 						<Image
 							src={message.author.avatar}
 							className="w-full h-full rounded-full"
 						/>
 					) : (
 						<CiFaceSmile className="h-full w-full fill-white" />
-					)}
-					{isOnline && (
+					)} */}
+
+					{/* {isOnline && (
 						<div
 							style={{
 								position: 'absolute',
@@ -56,19 +58,19 @@ export const Message = observer(
 								height: '10px',
 							}}
 						/>
-					)}
+					)} */}
 				</Box>
 				<Box
 					className={clsx(
 						'text-gray-200 p-2 rounded-xl relative w-full',
-						// isAdmin() ? `bg-[#b5a3a3]` : `bg-[#f7b665]`,
+						isAdmin() ? `bg-[#b5a3a3]` : `bg-[#f7b665]`,
 					)}
 				>
 					<Text className="text-white text-sm">{message.author.firstName}</Text>
-					<Text className="text-white">{message.message}</Text>
-					<Text className="absolute right-2 bottom-1 text-xs text-white">
+					<Text className="text-white">{message.content}</Text>
+					{/* <Text className="absolute right-2 bottom-1 text-xs text-white">
 						{formatUTCDate(message.createdAt, store)}
-					</Text>
+					</Text> */}
 				</Box>
 			</Box>
 		)

@@ -41,7 +41,7 @@ export const ChatList: FC<ChatListProps> = observer(
 								<ChatItem
 									key={chat.id}
 									chat={chat}
-									selectedChat={selectedChat?.id}
+									selectedChat={selectedChat}
 									onClick={() => {
 										// console.log('onClick')
 										setSelectedChat(chat)

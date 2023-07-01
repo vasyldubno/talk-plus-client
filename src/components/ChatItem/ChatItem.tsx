@@ -7,7 +7,7 @@ import { formatUTCDate } from '@/utils/formatUTCDate'
 
 interface ChatItemProps {
 	chat: IChat
-	selectedChat: number | undefined
+	selectedChat: IChat | null
 	onClick: () => void
 	conversation: IConversation | undefined
 }
@@ -26,7 +26,7 @@ export const ChatItem: FC<ChatItemProps> = ({
 
 	const isSelectedChat = () => {
 		if (selectedChat) {
-			return selectedChat === chat.id
+			return selectedChat.id === chat.id
 		}
 		return false
 	}
@@ -50,10 +50,10 @@ export const ChatItem: FC<ChatItemProps> = ({
 				<Box className="flex justify-between">
 					<Text className="text-white">{chat.title}</Text>
 					<Text className="text-sm text-white">
-						{formatUTCDate(getLastMessage()?.updatedAt, store)}
+						{formatUTCDate(chat.updated_at, store)}
 					</Text>
 				</Box>
-				{getLastMessage() && (
+				{/* {getLastMessage() && (
 					<Text
 						className="text-white text-xs"
 						style={{
@@ -64,7 +64,7 @@ export const ChatItem: FC<ChatItemProps> = ({
 					>
 						{getLastMessage()?.message}
 					</Text>
-				)}
+				)} */}
 			</Box>
 		</Box>
 	)

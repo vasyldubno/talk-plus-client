@@ -17,24 +17,28 @@ import {
 	useState,
 } from 'react'
 import { COLORS } from '@/config/colors'
+import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
 import { SendIcon } from '@/icons/SendIcon'
-import { ISocket } from '@/types/types'
+import { ChatService } from '@/services/chatService'
+import { IChat, ISocket } from '@/types/types'
 
 interface IChatFormProps {
-	room: string
-	roomId: number
+	// room: string
+	// roomId: number
 	// typeChat: 'chat' | 'group' | undefined
+	chat: IChat
 	className?: string
 	afterSubmit: () => void
 }
 
 export const ChatForm: FC<IChatFormProps> = ({
-	room,
-	roomId,
+	// room,
+	// roomId,
 	className,
 	// typeChat,
 	afterSubmit,
+	chat,
 }) => {
 	const [value, setValue] = useState('')
 	const [isTouchScreen, setIsTouchScreen] = useState(false)
@@ -43,7 +47,15 @@ export const ChatForm: FC<IChatFormProps> = ({
 
 	const inputRef = useRef<HTMLInputElement>(null)
 
-	const handleClick = () => {
+	const handleClick = async () => {
+		if (value) {
+			ChatService.addNewMessage({
+				content: value,
+				chatId: chat.id,
+				userId: store.getUserId(),
+				afterSubmit: () => setValue(''),
+			})
+		}
 		if (isTouchScreen) {
 			inputRef.current?.blur()
 		} else {

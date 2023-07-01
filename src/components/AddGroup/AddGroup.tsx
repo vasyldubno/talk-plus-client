@@ -75,8 +75,6 @@ export const AddGroup: FC<AddGroupProps> = observer(
 				.single()
 
 			if (newGroup.status === 201) {
-				console.log(newGroup)
-				// const currentGroup = await supabase.from('chats').select().eq('title', data.title)
 				if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'TRUE') {
 					ChatService.addMember(userId, newGroup.data.id)
 				}
