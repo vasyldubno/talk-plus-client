@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { all } from 'axios'
+import axios, { all } from 'axios'
 import clsx from 'clsx'
 import { observer } from 'mobx-react-lite'
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
@@ -264,7 +264,7 @@ export const ChatScreen: FC = observer(() => {
 		console.log(user)
 	}
 
-	console.log('CONVERSATIONS', conversations)
+	console.log(conversations)
 
 	return (
 		<>

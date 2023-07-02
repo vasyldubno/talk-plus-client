@@ -26,13 +26,6 @@ export class ChatService {
 			.in('id', arrayChatsIds)
 			.order('updated_at', { ascending: false })
 
-		const allMessagesSupabase = await supabase
-			.from('messages')
-			.select()
-			.in('chat_id', arrayChatsIds)
-
-		console.log(allMessagesSupabase)
-
 		if (allChatsSupabase.data) {
 			const allChats: IChat[] = allChatsSupabase.data.map((chatSupabase) => ({
 				cover: chatSupabase.cover,
@@ -46,77 +39,47 @@ export class ChatService {
 
 			setChats(allChats)
 
-			if (allMessagesSupabase.data) {
-				const allConversationsPromises: Promise<IConversation>[] =
-					allChatsSupabase.data.map(async (chatSupabase) => {
-						const allMessagesFiltered = allMessagesSupabase.data.filter(
-							(message) => message.chat_id === chatSupabase.id,
-						)
+			const allChatsSupabasePromises = allChatsSupabase.data.map(
+				async (chatSupabase) => {
+					const messagesSupabase = await supabase
+						.from('messages')
+						.select()
+						.eq('chat_id', chatSupabase.id)
+						.limit(14)
+						.order('created_at', { ascending: false })
 
-						const messagesPromises: Promise<IMessage>[] =
-							allMessagesFiltered.map(async (messageFiltered) => {
+					if (messagesSupabase.data) {
+						const messagesPromise: Promise<IMessage>[] =
+							messagesSupabase.data.map(async (messageSupabase) => {
 								const author = await supabase
 									.from('users')
 									.select()
-									.eq('id', messageFiltered.author_id)
+									.eq('id', messageSupabase.author_id)
 									.single()
 
 								return {
-									id: messageFiltered.id,
-									content: messageFiltered.content,
-									createdAt: messageFiltered.created_at,
+									id: messageSupabase.id,
 									author: { firstName: author.data.firstName },
+									content: messageSupabase.content,
+									createdAt: messageSupabase.created_at,
 								}
 							})
 
-						const messages = await Promise.all(messagesPromises)
+						const messages = await Promise.all(messagesPromise)
+						setConversations((prev) => [
+							...prev,
+							{ id: chatSupabase.id, title: chatSupabase.title, messages },
+						])
+					}
+				},
+			)
 
-						return {
-							id: chatSupabase.id,
-							title: chatSupabase.title,
-							messages,
-						}
-					})
+			const finish = await Promise.all(allChatsSupabasePromises)
 
-				const allConversations = await Promise.all(allConversationsPromises)
-
-				setConversations(allConversations)
+			if (finish) {
+				onClose()
 			}
-
-			onClose()
 		}
-
-		// if (data.data) {
-		// 	const allPromises = data.data.map(async (chat) => {
-		// 		const responseChat = await supabase
-		// 			.from('chats')
-		// 			.select()
-		// 			.eq('id', chat.chat_id)
-		// 			.single()
-
-		// 		if (responseChat) {
-		// 			const newChat: IChat = {
-		// 				cover: responseChat.data.cover,
-		// 				created_at: responseChat.data.created_at,
-		// 				updated_at: responseChat.data.updated_at,
-		// 				id: responseChat.data.id,
-		// 				title: responseChat.data.title,
-		// 				type: responseChat.data.type,
-		// 				isAdmin: responseChat.data.admin_id === userId,
-		// 			}
-		// 			setChats((prev) => [newChat, ...prev])
-
-		// 			const newConversation: IConversation = {
-		// 				id: responseChat.data.id,
-		// 				title: responseChat.data.title,
-		// 				messages: [],
-		// 			}
-		// 			setConversations((prev) => [newConversation, ...prev])
-		// 		}
-		// 	})
-
-		// 	Promise.all(allPromises).then(() => onClose())
-		// }
 	}
 
 	static async getAllMessages({
