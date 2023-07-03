@@ -24,6 +24,7 @@ interface FileInputProps {
 	onChange: (files: FileList) => void
 	error: FieldError | undefined
 	setImageBase64: Dispatch<SetStateAction<string>>
+	setImageFile: Dispatch<SetStateAction<File | undefined>>
 	imageBase64: string
 	className?: string
 	width: string
@@ -35,6 +36,7 @@ export const FileInput: FC<FileInputProps> = ({
 	error,
 	imageBase64,
 	setImageBase64,
+	setImageFile,
 	className,
 	heigth,
 	width,
@@ -109,6 +111,7 @@ export const FileInput: FC<FileInputProps> = ({
 					<ImageCropper
 						image={selectedImage as File}
 						setImageBase64={setImageBase64}
+						setImageFile={setImageFile}
 						onClose={onClose}
 					/>
 				</ModalContent>

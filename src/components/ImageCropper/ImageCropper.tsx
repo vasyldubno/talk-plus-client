@@ -20,12 +20,14 @@ import { useMatchMedia } from '@/hooks/useMatchMedia'
 interface ImageCropperProps {
 	image: File
 	setImageBase64: Dispatch<SetStateAction<string>>
+	setImageFile: Dispatch<SetStateAction<File | undefined>>
 	onClose: () => void
 }
 
 export const ImageCropper: FC<ImageCropperProps> = ({
 	image,
 	setImageBase64,
+	setImageFile,
 	onClose,
 }) => {
 	const imgRef = useRef<HTMLImageElement>(null)
@@ -34,6 +36,7 @@ export const ImageCropper: FC<ImageCropperProps> = ({
 	const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
 	const [aspect] = useState<number>(1 / 1)
 	const [imageType, setImageType] = useState('')
+	const [imageName, setImageName] = useState('')
 
 	const smSceen = useMatchMedia('(max-width: 640px)')
 
@@ -60,6 +63,7 @@ export const ImageCropper: FC<ImageCropperProps> = ({
 	useEffect(() => {
 		if (image) {
 			setImageType(image.type)
+			setImageName(image.name)
 			setCrop(undefined)
 			const reader = new FileReader()
 			reader.addEventListener('load', () => {
@@ -100,6 +104,14 @@ export const ImageCropper: FC<ImageCropperProps> = ({
 				cropHeight,
 			)
 			const croppedImage = canvas.toDataURL(imageType, 0.9)
+
+			canvas.toBlob((blob) => {
+				if (blob) {
+					const file = new File([blob], imageName, { type: imageType })
+					setImageFile(file)
+				}
+			}, imageType)
+
 			setImageBase64(croppedImage)
 			onClose()
 		}

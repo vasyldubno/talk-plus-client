@@ -10,7 +10,7 @@ export default async function handler(
 		api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
 		api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
 	})
-	const response = await v2.uploader.upload(req.body.imageUrl, {
+	const response = await v2.uploader.upload(req.body.image, {
 		upload_preset: 'test_test',
 		folder: 'talk-plus',
 		transformation: {

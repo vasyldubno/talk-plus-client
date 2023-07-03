@@ -36,6 +36,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 		const userId = store.getUserId()
 
 		const [imageBase64, setImageBase64] = useState('')
+		const [imageFile, setImageFile] = useState<File>()
 
 		const formSchema = z.object({
 			title: z.string().min(3, 'Must contain min 3 symbols'),
@@ -57,36 +58,47 @@ export const AddGroup: FC<AddGroupProps> = observer(
 		const onSubmit: SubmitHandler<FormSchema> = async (data) => {
 			store.updateIsLoading(true)
 
-			console.log(imageBase64)
+			if (imageFile) {
+				const formData = new FormData()
+				formData.append('file', imageFile)
+				formData.append(
+					'api_key',
+					process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
+				)
+				formData.append('upload_preset', 'test_test')
 
-			const response = await axios.post('/api/cloudinary', {
-				imageUrl: imageBase64,
-			})
+				const response = await axios.post(
+					`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`,
+					formData,
+				)
 
-			const user = await supabase.auth.getUser()
+				if (response) {
+					const user = await supabase.auth.getUser()
 
-			const newGroup = await supabase
-				.from('chats')
-				.insert({
-					title: data.title,
-					admin_id: user.data.user?.id,
-					cover: response.data.imageUrl,
-					type: 'group',
-				})
-				.select()
-				.single()
+					const newGroup = await supabase
+						.from('chats')
+						.insert({
+							title: data.title,
+							admin_id: user.data.user?.id,
+							cover: response.data.secure_url,
+							type: 'group',
+						})
+						.select()
+						.single()
 
-			if (newGroup.status === 201) {
-				// if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'FALSE') {
-				// 	ChatService.addMember(userId, newGroup.data.id)
-				// }
+					if (newGroup.status === 201) {
+						// if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'FALSE') {
+						// 	ChatService.addMember(userId, newGroup.data.id)
+						// }
 
-				ChatService.addMember(userId, newGroup.data.id)
+						ChatService.addMember(userId, newGroup.data.id)
 
-				store.updateIsLoading(false)
-				setIsAddGroup(false)
-				if (onClose) {
-					onClose()
+						store.updateIsLoading(false)
+						setIsAddGroup(false)
+						if (onClose) {
+							onClose()
+						}
+					}
 				}
 			}
 		}
@@ -115,6 +127,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 									error={errors.file}
 									setImageBase64={setImageBase64}
 									imageBase64={imageBase64}
+									setImageFile={setImageFile}
 									className="flex justify-center"
 									heigth="h-52"
 									width="w-52"
