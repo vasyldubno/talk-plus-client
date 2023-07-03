@@ -17,6 +17,8 @@ export class ChatService {
 		onClose: () => void,
 	) {
 		const data = await supabase.from('members').select().eq('user_id', userId)
+		console.log(data)
+		console.log(userId)
 
 		const arrayChatsIds = data.data?.map((member) => member.chat_id) as string[]
 

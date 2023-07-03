@@ -75,7 +75,7 @@ export const AddGroup: FC<AddGroupProps> = observer(
 				.single()
 
 			if (newGroup.status === 201) {
-				if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'TRUE') {
+				if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'FALSE') {
 					ChatService.addMember(userId, newGroup.data.id)
 				}
 				store.updateIsLoading(false)

@@ -61,7 +61,7 @@ export const ChatScreen: FC = observer(() => {
 					table: 'chats',
 				},
 				(payload) => {
-					if (userId === payload.new.admin_id) {
+					if (store.getUserId() === payload.new.admin_id) {
 						setChats((prev) => {
 							const updatedChats: IChat[] = [
 								{
@@ -76,6 +76,13 @@ export const ChatScreen: FC = observer(() => {
 								...prev,
 							]
 							return updatedChats
+						})
+
+						setConversations((prev) => {
+							return [
+								...prev,
+								{ id: payload.new.id, title: payload.new.title, messages: [] },
+							]
 						})
 					}
 				},
@@ -93,6 +100,13 @@ export const ChatScreen: FC = observer(() => {
 							(chat) => chat.id !== payload.old.id,
 						)
 						return updatedChats
+					})
+
+					setConversations((prev) => {
+						const updatedConversations = prev.filter(
+							(conversation) => conversation.id !== payload.old.id,
+						)
+						return [...updatedConversations]
 					})
 				},
 			)
@@ -264,7 +278,7 @@ export const ChatScreen: FC = observer(() => {
 		console.log(user)
 	}
 
-	console.log(conversations)
+	console.log('CONVERSATIONS', conversations)
 
 	return (
 		<>
