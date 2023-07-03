@@ -15,6 +15,7 @@ interface ProfileSettingsProps {
 
 export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 	const [imageBase64, setImageBase64] = useState('')
+	const [imageFile, setImageFile] = useState<File>()
 
 	const formSchema = z.object({
 		image: z.instanceof(FileList),
@@ -58,6 +59,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 							error={error}
 							imageBase64={imageBase64}
 							setImageBase64={setImageBase64}
+							setImageFile={setImageFile}
 							className="flex justify-center"
 							heigth="h-52"
 							width="w-52"
