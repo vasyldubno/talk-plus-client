@@ -57,6 +57,8 @@ export const AddGroup: FC<AddGroupProps> = observer(
 		const onSubmit: SubmitHandler<FormSchema> = async (data) => {
 			store.updateIsLoading(true)
 
+			console.log(imageBase64)
+
 			const response = await axios.post('/api/cloudinary', {
 				imageUrl: imageBase64,
 			})
