@@ -112,45 +112,47 @@ export const AddGroup: FC<AddGroupProps> = observer(
 					<h1 className="font-bold text-white text-2xl py-2">New Group</h1>
 					<div className="lg:hidden" />
 				</Box>
-				{!isLoading && (
-					<form
-						onSubmit={handleSubmit(onSubmit)}
-						encType="multipart/form-data"
-						className="px-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10"
-					>
-						<Controller
-							name="file"
-							control={control}
-							render={({ field: { onChange } }) => (
-								<FileInput
-									onChange={onChange}
-									error={errors.file}
-									setImageBase64={setImageBase64}
-									imageBase64={imageBase64}
-									setImageFile={setImageFile}
-									className="flex justify-center"
-									heigth="h-52"
-									width="w-52"
-								/>
-							)}
-						/>
-						<FormControl isInvalid={!!errors.title} className="text-white">
-							<FormLabel>Group Name</FormLabel>
-							<Input
-								type="text"
-								{...register('title')}
-								className="placeholder:text-gray-500"
-								placeholder="Typing text..."
+				<Box className="">
+					{!isLoading && (
+						<form
+							onSubmit={handleSubmit(onSubmit)}
+							encType="multipart/form-data"
+							className="px-5 pb-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10 bg-[var(--color-dark-gray)]"
+						>
+							<Controller
+								name="file"
+								control={control}
+								render={({ field: { onChange } }) => (
+									<FileInput
+										onChange={onChange}
+										error={errors.file}
+										setImageBase64={setImageBase64}
+										imageBase64={imageBase64}
+										setImageFile={setImageFile}
+										className="flex justify-center"
+										heigth="h-52"
+										width="w-52"
+									/>
+								)}
 							/>
-							{errors.title && (
-								<FormErrorMessage>{errors.title.message}</FormErrorMessage>
-							)}
-						</FormControl>
-						<Button type="submit" className="mt-5 self-center w-fit">
-							Create Group
-						</Button>
-					</form>
-				)}
+							<FormControl isInvalid={!!errors.title} className="text-white">
+								<FormLabel>Group Name</FormLabel>
+								<Input
+									type="text"
+									{...register('title')}
+									className="placeholder:text-gray-500"
+									placeholder="Typing text..."
+								/>
+								{errors.title && (
+									<FormErrorMessage>{errors.title.message}</FormErrorMessage>
+								)}
+							</FormControl>
+							<Button type="submit" className="mt-5 self-center w-fit">
+								Create Group
+							</Button>
+						</form>
+					)}
+				</Box>
 			</Box>
 		)
 	},
