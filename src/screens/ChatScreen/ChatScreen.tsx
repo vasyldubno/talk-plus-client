@@ -381,6 +381,7 @@ export const ChatScreen: FC = observer(() => {
 									onClickBack={() => {
 										setIsOpenLeftSide(true)
 										setIsOpenRightSide(false)
+										setSelectedChat(null)
 									}}
 								/>
 								<ChatFeed
