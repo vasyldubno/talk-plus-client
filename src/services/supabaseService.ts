@@ -222,8 +222,10 @@ export class SupabaseService {
 
 	static async messagesInsert({
 		setConversations,
+		afterSubmit,
 	}: {
 		setConversations: Dispatch<SetStateAction<IConversation[]>>
+		afterSubmit: () => void
 	}) {
 		return supabase
 			.channel('messages-insert')
@@ -272,6 +274,7 @@ export class SupabaseService {
 						}
 						return prev
 					})
+					afterSubmit()
 				},
 			)
 			.subscribe()

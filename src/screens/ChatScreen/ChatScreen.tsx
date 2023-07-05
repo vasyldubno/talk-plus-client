@@ -55,7 +55,12 @@ export const ChatScreen: FC = observer(() => {
 	useEffect(() => {
 		SupabaseService.chatsInsert({ setChats, setConversations, store })
 		SupabaseService.chatsDelete({ setChats, setConversations })
-		SupabaseService.messagesInsert({ setConversations })
+		SupabaseService.messagesInsert({
+			setConversations,
+			afterSubmit: () => {
+				scrollToBottom(chatFeedRef)
+			},
+		})
 		SupabaseService.chatsUpdate({ setChats, store })
 		SupabaseService.membersInsert({ setChats, setConversations, store })
 		SupabaseService.membersUpdate({
@@ -98,11 +103,6 @@ export const ChatScreen: FC = observer(() => {
 			setIsOpenRightSide(false)
 		}
 	}, [md])
-
-	useEffect(() => {
-		console.log('change conversation')
-		scrollToBottom(chatFeedRef)
-	}, [conversations])
 
 	const handleAddGroup = () => {
 		setIsAddGroup(true)
