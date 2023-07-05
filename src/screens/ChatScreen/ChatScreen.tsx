@@ -57,9 +57,6 @@ export const ChatScreen: FC = observer(() => {
 		SupabaseService.chatsDelete({ setChats, setConversations })
 		SupabaseService.messagesInsert({
 			setConversations,
-			afterSubmit: () => {
-				scrollToBottom(chatFeedRef)
-			},
 		})
 		SupabaseService.chatsUpdate({ setChats, store })
 		SupabaseService.membersInsert({ setChats, setConversations, store })
