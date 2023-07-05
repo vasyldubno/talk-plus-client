@@ -35,8 +35,6 @@ export const ChatForm: FC<IChatFormProps> = ({ className, chat }) => {
 
 	const inputRef = useRef<HTMLInputElement>(null)
 
-	console.log(navigator)
-
 	const handleClick = async () => {
 		if (value) {
 			ChatService.addNewMessage({
@@ -51,7 +49,6 @@ export const ChatForm: FC<IChatFormProps> = ({ className, chat }) => {
 		} else {
 			inputRef.current?.focus()
 		}
-		console.log(navigator)
 	}
 
 	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
