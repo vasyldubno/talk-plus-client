@@ -46,13 +46,10 @@ export const ChatForm: FC<IChatFormProps> = ({ className, chat }) => {
 		}
 		if (isTouchScreen) {
 			inputRef.current?.blur()
-			if ('virtualKeyboard' in navigator) {
-				// The VirtualKeyboard API is supported!
-				console.log(navigator.virtualKeyboard)
-			}
 		} else {
 			inputRef.current?.focus()
 		}
+		console.log(navigator)
 	}
 
 	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
