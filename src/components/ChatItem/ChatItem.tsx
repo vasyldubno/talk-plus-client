@@ -1,9 +1,10 @@
 import { Box, Image, Text } from '@chakra-ui/react'
 import clsx from 'clsx'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useStore } from '@/hooks/useStore'
-import { IChat, IConversation } from '@/types/types'
+import { IChat, IConversation, IMessage } from '@/types/types'
 import { formatUTCDate } from '@/utils/formatUTCDate'
+import { getLastMessage } from '@/utils/getLastMessage'
 
 interface ChatItemProps {
 	chat: IChat
@@ -18,11 +19,12 @@ export const ChatItem: FC<ChatItemProps> = ({
 	selectedChat,
 	conversation,
 }) => {
+	const [lastMessage, setLastMessage] = useState<IMessage | null>(null)
 	const store = useStore()
 
-	const getLastMessage = () => {
-		return conversation?.messages[0]
-	}
+	useEffect(() => {
+		setLastMessage(getLastMessage(conversation))
+	}, [conversation])
 
 	const isSelectedChat = () => {
 		if (selectedChat) {
@@ -53,7 +55,7 @@ export const ChatItem: FC<ChatItemProps> = ({
 						{formatUTCDate(chat.updated_at, store)}
 					</Text>
 				</Box>
-				{/* {getLastMessage() && (
+				{lastMessage && (
 					<Text
 						className="text-white text-xs"
 						style={{
@@ -62,9 +64,9 @@ export const ChatItem: FC<ChatItemProps> = ({
 							overflow: 'hidden',
 						}}
 					>
-						{getLastMessage()?.message}
+						{lastMessage.content}
 					</Text>
-				)} */}
+				)}
 			</Box>
 		</Box>
 	)

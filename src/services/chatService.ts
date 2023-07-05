@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
+import { MESSAGE_PER_PAGE } from '@/config/consts'
 import { supabase } from '@/config/supabase'
 import { IChat, IConversation, IMessage } from '@/types/types'
 
@@ -45,7 +46,7 @@ export class ChatService {
 						.from('messages')
 						.select()
 						.eq('chat_id', chatSupabase.id)
-						.limit(14)
+						.limit(MESSAGE_PER_PAGE)
 						.order('created_at', { ascending: false })
 
 					if (messagesSupabase.data) {
@@ -90,7 +91,7 @@ export class ChatService {
 			.from('messages')
 			.select()
 			.eq('chat_id', chatId)
-			.limit(14)
+			.limit(MESSAGE_PER_PAGE)
 			.order('created_at', { ascending: false })
 
 		if (messagesSupabase.data) {
@@ -210,6 +211,47 @@ export class ChatService {
 			if (responseMessagesInsert.status === 201) {
 				afterSubmit()
 			}
+		}
+	}
+
+	static async getAuthor({ authorId }: { authorId: string }) {
+		const author = await supabase
+			.from('users')
+			.select()
+			.eq('id', authorId)
+			.single()
+		return author.data
+	}
+
+	static async getMessagesByPage({
+		page,
+		chatId,
+	}: {
+		page: number
+		chatId: string
+	}) {
+		const from = (page - 1) * MESSAGE_PER_PAGE
+		const to = from + MESSAGE_PER_PAGE - 1
+
+		const amountOldMessages = page * MESSAGE_PER_PAGE
+
+		const messagesSupabase = await supabase
+			.from('messages')
+			.select('*', { count: 'exact' })
+			.eq('chat_id', chatId)
+			.range(from, to)
+			.order('created_at', { ascending: false })
+
+		if (messagesSupabase.count) {
+			return {
+				messages: messagesSupabase.data,
+				isNextPage: messagesSupabase.count > amountOldMessages,
+			}
+		}
+
+		return {
+			messages: [],
+			isNextPage: false,
 		}
 	}
 }

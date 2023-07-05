@@ -1,10 +1,16 @@
 /* eslint-disable react/display-name */
 import { Message } from '../Message/Message'
 import { Box } from '@chakra-ui/react'
-import { Dispatch, SetStateAction, forwardRef, useEffect } from 'react'
+import {
+	Dispatch,
+	SetStateAction,
+	forwardRef,
+	useEffect,
+	useState,
+} from 'react'
 import { useInView } from 'react-intersection-observer'
+import { ChatService } from '@/services/chatService'
 import { IChat, IConversation, IMessage } from '@/types/types'
-import { scrollToBottom } from '@/utils/scrollToBottom'
 
 interface ChatFeedProps {
 	conversation: IMessage[] | undefined
@@ -15,9 +21,63 @@ interface ChatFeedProps {
 export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 	({ conversation, selectedChat, setConversations }, chatFeedRef) => {
 		const { ref, inView } = useInView({
-			threshold: 0.5,
+			threshold: 0.1,
 			triggerOnce: true,
 		})
+
+		const [page, setPage] = useState(1)
+		const [isNextPage, setIsNextPage] = useState(true)
+		const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
+
+		useEffect(() => {
+			if (inView && selectedChat && isNextPage) {
+				setIsFetchingNextPage(true)
+				setPage(page + 1)
+				ChatService.getMessagesByPage({
+					page: page + 1,
+					chatId: selectedChat.id,
+				}).then(async (res) => {
+					setIsNextPage(res.isNextPage)
+					const messagesPromise: Promise<IMessage>[] = res.messages.map(
+						async (message) => {
+							const author = await ChatService.getAuthor({
+								authorId: message.author_id,
+							})
+							return {
+								id: message.id,
+								content: message.content,
+								createdAt: message.created_at,
+								author: {
+									firstName: author.firstName,
+									id: author.id,
+								},
+							}
+						},
+					)
+					const messages = await Promise.all(messagesPromise)
+					setConversations((prev) => {
+						const currentConversation = prev.find(
+							(conv) => conv.id === selectedChat.id,
+						)
+						const restConversations = prev.filter(
+							(rConv) => rConv.id !== selectedChat.id,
+						)
+						if (currentConversation) {
+							return [
+								...restConversations,
+								{
+									id: currentConversation?.id,
+									title: currentConversation?.title,
+									messages: [...currentConversation.messages, ...messages],
+								},
+							]
+						}
+						return prev
+					})
+					setIsFetchingNextPage(false)
+				})
+			}
+		}, [inView])
 
 		return (
 			<>
@@ -46,6 +106,9 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 								/>
 							)
 						})}
+					{isFetchingNextPage && (
+						<p className="text-white text-center">Loading...</p>
+					)}
 				</Box>
 			</>
 		)
