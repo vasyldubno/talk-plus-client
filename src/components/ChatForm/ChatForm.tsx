@@ -17,29 +17,17 @@ import {
 	useState,
 } from 'react'
 import { COLORS } from '@/config/colors'
-import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
 import { SendIcon } from '@/icons/SendIcon'
 import { ChatService } from '@/services/chatService'
-import { IChat, ISocket } from '@/types/types'
+import { IChat } from '@/types/types'
 
 interface IChatFormProps {
-	// room: string
-	// roomId: number
-	// typeChat: 'chat' | 'group' | undefined
 	chat: IChat
 	className?: string
-	afterSubmit: () => void
 }
 
-export const ChatForm: FC<IChatFormProps> = ({
-	// room,
-	// roomId,
-	className,
-	// typeChat,
-	afterSubmit,
-	chat,
-}) => {
+export const ChatForm: FC<IChatFormProps> = ({ className, chat }) => {
 	const [value, setValue] = useState('')
 	const [isTouchScreen, setIsTouchScreen] = useState(false)
 

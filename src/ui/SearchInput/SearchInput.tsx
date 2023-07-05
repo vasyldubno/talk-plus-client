@@ -12,11 +12,16 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { IUser } from '@/types/types'
 
 interface SearchInputProps {
-	setUsers: Dispatch<SetStateAction<IUser[] | null>>
+	setUsers: Dispatch<SetStateAction<IUser[]>>
 	chatId: string
+	onChange: (username: string) => Promise<void>
 }
 
-export const SearchInput: FC<SearchInputProps> = ({ setUsers, chatId }) => {
+export const SearchInput: FC<SearchInputProps> = ({
+	setUsers,
+	chatId,
+	onChange,
+}) => {
 	const [searchValue, setSearchValue] = useState('')
 	const debouncedValue = useDebounce(searchValue)
 	const [subscribers, setSubscribers] = useState<IUser[] | null>(null)
@@ -27,11 +32,17 @@ export const SearchInput: FC<SearchInputProps> = ({ setUsers, chatId }) => {
 
 	useEffect(() => {
 		if (debouncedValue.length >= 3) {
-			console.log('')
+			onChange(debouncedValue)
+		} else {
+			setUsers([])
 		}
-	}, [debouncedValue, setUsers, subscribers])
+	}, [debouncedValue])
 
 	return (
-		<Input placeholder="Search by username" onChange={handleChangleValue} />
+		<Input
+			placeholder="Search by username"
+			onChange={handleChangleValue}
+			value={searchValue}
+		/>
 	)
 }

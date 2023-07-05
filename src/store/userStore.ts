@@ -6,7 +6,7 @@ export class UserStore {
 	private username: string | null
 	private userId: string | null
 	private timezone: string | null
-	private onlineUsers: number[]
+	private onlineUsers: string[]
 	private isLoading: boolean
 
 	constructor() {
@@ -40,8 +40,10 @@ export class UserStore {
 		return null
 	}
 
-	updateOnlineUsers(payload: number[]) {
-		this.onlineUsers = payload
+	updateOnlineUsers(payload: string[] | null) {
+		if (payload) {
+			this.onlineUsers = payload
+		}
 		return null
 	}
 

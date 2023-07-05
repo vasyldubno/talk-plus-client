@@ -8,7 +8,9 @@ export interface IMessage {
 	id: string
 	content: string
 	author: {
+		id: string
 		firstName: string
+		avatar?: string
 	}
 	createdAt: string
 }
@@ -20,13 +22,11 @@ export interface IConversation {
 }
 
 export interface IUser {
-	id: number
-	email: string
-	password: string
+	id: string
+	// email: string
 	username: string
 	profile: {
-		id: number
-		avatar: string
+		avatar?: string
 		firstName: string
 	}
 }

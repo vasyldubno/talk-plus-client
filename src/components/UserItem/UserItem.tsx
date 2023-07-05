@@ -5,7 +5,7 @@ import { IUser } from '@/types/types'
 
 interface UserItemProps {
 	user: IUser
-	setSelectedUsers: Dispatch<SetStateAction<IUser[] | null>>
+	setSelectedUsers: Dispatch<SetStateAction<IUser[]>>
 }
 
 export const UserItem: FC<UserItemProps> = ({ user, setSelectedUsers }) => {
@@ -19,10 +19,11 @@ export const UserItem: FC<UserItemProps> = ({ user, setSelectedUsers }) => {
 			})
 		} else {
 			setSelectedUsers((prev) => {
-				if (prev !== null) {
-					return prev.filter((prevUser) => prevUser.username !== user.username)
-				}
-				return null
+				// if (prev !== null) {
+				// 	return prev.filter((prevUser) => prevUser.username !== user.username)
+				// }
+				// return null
+				return prev.filter((prevUser) => prevUser.username !== user.username)
 			})
 		}
 	}

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios'
 import { observer } from 'mobx-react-lite'
@@ -27,6 +29,29 @@ export const UserProvider: FC<{
 				store.updateUsername(res.data.user.user_metadata.username)
 				store.updateUserId(res.data.user.id)
 				store.updateIsLoading(false)
+
+				const channel = supabase.channel('online-users')
+
+				channel
+					.on('presence', { event: 'sync' }, () => {
+						const presenseUsers = channel.presenceState() as {
+							[key: string]: { user_id: string }[]
+						}
+						const onlineUsers = Object.values(presenseUsers).flatMap((arr) =>
+							arr.map((obj) => obj.user_id),
+						)
+						store.updateOnlineUsers(onlineUsers)
+					})
+					.on('presence', { event: 'join' }, (payload) => {})
+					.on('presence', { event: 'leave' }, (payload) => {})
+					.subscribe((status) => {
+						if (status === 'SUBSCRIBED') {
+							channel.track({ user_id: store.getUserId() })
+						}
+						if (status === 'CLOSED') {
+							channel.untrack()
+						}
+					})
 			}
 		})
 	}, [])

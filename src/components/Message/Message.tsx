@@ -3,74 +3,79 @@ import { Box, Image, Text } from '@chakra-ui/react'
 import clsx from 'clsx'
 import { observer } from 'mobx-react-lite'
 import 'moment/locale/uk'
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { CiFaceSmile } from 'react-icons/ci'
 import { useStore } from '@/hooks/useStore'
-import { IMessage } from '@/types/types'
+import { IChat, IMessage } from '@/types/types'
 import { formatUTCDate } from '@/utils/formatUTCDate'
 
 interface MessageProps {
 	message: IMessage
-	chatType: 'group' | 'chat' | undefined
+	chat: IChat | null
 }
 
 export const Message = observer(
-	forwardRef<HTMLDivElement, MessageProps>(({ message, chatType }, ref) => {
+	forwardRef<HTMLDivElement, MessageProps>(({ message, chat }, ref) => {
+		const [isOnline, setIsOnline] = useState(false)
+
 		const store = useStore()
-		// const userId = store.getUserId()
 		const onlineUsers = store.getOnlineUsers()
+		const userId = store.getUserId()
 
-		// const isAdmin = () => {
-		// 	return userId === message.author.id.toString()
-		// }
-		const isAdmin = () => false
-
-		// const isOnline = onlineUsers.includes(message.author.id)
+		useEffect(() => {
+			if (userId) {
+				setIsOnline(onlineUsers.includes(message.author.id))
+			}
+		}, [userId, onlineUsers])
 
 		return (
 			<Box
 				className={clsx(
 					'flex gap-2',
-					// isAdmin() ? '' : 'ml-auto flex-row-reverse',
-					chatType === 'chat' ? 'w-full md:w-[70%]' : 'w-[90%] lg:w-[100%]',
+					'ml-auto flex-row',
+					chat?.type === 'chat' ? 'w-full md:w-[70%]' : 'w-[90%] lg:w-[100%]',
 				)}
 				ref={ref}
 			>
 				<Box className="h-10 w-10 self-end flex-shrink-0 relative">
-					{/* {message.author.avatar ? (
+					{message.author.avatar ? (
 						<Image
 							src={message.author.avatar}
 							className="w-full h-full rounded-full"
 						/>
 					) : (
-						<CiFaceSmile className="h-full w-full fill-white" />
-					)} */}
+						<>
+							<Image
+								src="https://res.cloudinary.com/dtkchspyx/image/upload/v1686323806/talk-plus/empty-user-image_tzkax8.png"
+								className="w-full h-full rounded-full"
+							/>
+						</>
+					)}
 
-					{/* {isOnline && (
+					{isOnline && (
 						<div
 							style={{
 								position: 'absolute',
-								bottom: '3px',
-								right: '3px',
+								bottom: '2px',
+								right: '1px',
 								borderRadius: '99px',
 								backgroundColor: 'var(--color-subscriber-online)',
 								width: '10px',
 								height: '10px',
 							}}
 						/>
-					)} */}
+					)}
 				</Box>
 				<Box
 					className={clsx(
-						'text-gray-200 p-2 rounded-xl relative w-full',
-						isAdmin() ? `bg-[#b5a3a3]` : `bg-[#f7b665]`,
+						'text-gray-200 p-2 rounded-xl relative w-full bg-[var(--color-gray-light)]',
 					)}
 				>
 					<Text className="text-white text-sm">{message.author.firstName}</Text>
 					<Text className="text-white">{message.content}</Text>
-					{/* <Text className="absolute right-2 bottom-1 text-xs text-white">
+					<Text className="absolute right-2 bottom-1 text-xs text-white">
 						{formatUTCDate(message.createdAt, store)}
-					</Text> */}
+					</Text>
 				</Box>
 			</Box>
 		)

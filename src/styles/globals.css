@@ -8,6 +8,7 @@
 :root {
 	--color-purple: #a95ffa;
 	--color-purple-50: rgb(169 95 250 / 50%) '';
+	--color-gray-light: #b5a3a3;
 	--color-gray: #757575;
 	--color-gray-50: rgb(170 170 170 / 30%);
 	--color-dark-gray: #1f2121;
@@ -16,6 +17,7 @@
 	--color-middle-green: #16836f;
 	--color-link: #0645ad;
 	--color-error: #800509;
+	--color-orange: #f7b665;
 }
 
 .ReactModal__Overlay {

@@ -1,3 +1,4 @@
+import { ModalAddNewUser } from '../ModalAddNewUser/ModalAddNewUser'
 import { UserItem } from '../UserItem/UserItem'
 import {
 	Box,
@@ -36,8 +37,6 @@ interface ChatHeaderProps {
 export const ChatHeader: FC<ChatHeaderProps> = observer(
 	({ chat, setChats, setSelectedChat, setConversations, onClickBack }) => {
 		const [isAddNewUser, setIsAddNewUser] = useState(false)
-		const [users, setUsers] = useState<IUser[] | null>(null)
-		const [selectedUsers, setSelectedUsers] = useState<IUser[] | null>(null)
 
 		const store = useStore()
 
@@ -64,6 +63,18 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 					}
 				}
 			}
+		}
+
+		const handleLeaveGroup = async () => {
+			await supabase
+				.from('members')
+				.delete()
+				.eq('user_id', store.getUserId())
+				.eq('chat_id', chat.id)
+		}
+
+		const handleAddNewUser = () => {
+			setIsAddNewUser(true)
 		}
 
 		return (
@@ -105,6 +116,7 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
+										onClick={handleAddNewUser}
 									>
 										<Box className="flex items-center">
 											<UserIcon height="1rem" width="1rem" fill="black" />
@@ -132,6 +144,7 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
+										onClick={handleLeaveGroup}
 									>
 										<Box className="flex items-center">
 											<BinIcon height="1rem" width="1rem" fill="black" />
@@ -156,28 +169,11 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 					</Box>
 				</Box>
 
-				<Modal isOpen={isAddNewUser} onClose={() => setIsAddNewUser(false)}>
-					<ModalOverlay />
-					<ModalContent
-						w="max-content"
-						height="80vh"
-						p={5}
-						backgroundColor="white"
-						boxShadow="none"
-						marginTop="10px"
-					>
-						<SearchInput setUsers={setUsers} chatId={chat.id} />
-						{users &&
-							users.map((user) => (
-								<UserItem
-									user={user}
-									key={user.id}
-									setSelectedUsers={setSelectedUsers}
-								/>
-							))}
-						<Button className="mt-5">Add</Button>
-					</ModalContent>
-				</Modal>
+				<ModalAddNewUser
+					chat={chat}
+					isOpen={isAddNewUser}
+					onClose={() => setIsAddNewUser(false)}
+				/>
 			</>
 		)
 	},

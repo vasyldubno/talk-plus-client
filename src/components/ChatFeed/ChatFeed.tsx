@@ -33,7 +33,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 										message={message}
 										key={message.id}
 										ref={ref}
-										chatType={selectedChat?.type}
+										chat={selectedChat}
 									/>
 								)
 							}
@@ -41,7 +41,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 								<Message
 									message={message}
 									key={message.id}
-									chatType={selectedChat?.type}
+									chat={selectedChat}
 								/>
 							)
 						})}

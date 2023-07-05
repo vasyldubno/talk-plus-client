@@ -19,6 +19,7 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
 import { ChatService } from '@/services/chatService'
+import { SupabaseService } from '@/services/supabaseService'
 import { IChat, IConversation, IMessage, ISocket } from '@/types/types'
 import { Loader } from '@/ui/Loader/Loader'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
@@ -51,160 +52,17 @@ export const ChatScreen: FC = observer(() => {
 	const userId = store.getUserId()
 
 	useEffect(() => {
-		supabase
-			.channel('chats-insert')
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'chats',
-				},
-				(payload) => {
-					if (store.getUserId() === payload.new.admin_id) {
-						setChats((prev) => {
-							const updatedChats: IChat[] = [
-								{
-									id: payload.new.id,
-									cover: payload.new.cover,
-									created_at: payload.new.created_at,
-									title: payload.new.title,
-									type: payload.new.type,
-									isAdmin: true,
-									updated_at: payload.new.updated_at,
-								},
-								...prev,
-							]
-							return updatedChats
-						})
-
-						setConversations((prev) => {
-							return [
-								...prev,
-								{ id: payload.new.id, title: payload.new.title, messages: [] },
-							]
-						})
-					}
-				},
-			)
-			.subscribe()
-
-		supabase
-			.channel('chats-delete')
-			.on(
-				'postgres_changes',
-				{ event: 'DELETE', schema: 'public', table: 'chats' },
-				(payload) => {
-					setChats((prev) => {
-						const updatedChats: IChat[] = prev.filter(
-							(chat) => chat.id !== payload.old.id,
-						)
-						return updatedChats
-					})
-
-					setConversations((prev) => {
-						const updatedConversations = prev.filter(
-							(conversation) => conversation.id !== payload.old.id,
-						)
-						return [...updatedConversations]
-					})
-				},
-			)
-			.subscribe()
-
-		supabase
-			.channel('messages-insert')
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'messages',
-				},
-				async (payload) => {
-					const author = await supabase
-						.from('users')
-						.select()
-						.eq('id', payload.new.author_id)
-						.single()
-
-					const newMessage: IMessage = {
-						id: payload.new.id,
-						content: payload.new.content,
-						createdAt: payload.new.created_at,
-						author: {
-							firstName: author.data.firstName,
-						},
-					}
-
-					setConversations((prev) => {
-						const currentConversation = prev.find(
-							(conversation) => conversation.id === payload.new.chat_id,
-						)
-
-						const otherConversations = prev.filter(
-							(conversation) => conversation.id !== payload.new.chat_id,
-						)
-
-						if (currentConversation) {
-							return [
-								{
-									id: currentConversation?.id,
-									title: currentConversation?.title,
-									messages: [newMessage, ...currentConversation.messages],
-								},
-								...otherConversations,
-							]
-						}
-						return prev
-					})
-				},
-			)
-			.subscribe()
-
-		supabase
-			.channel('chats-update')
-			.on(
-				'postgres_changes',
-				{
-					event: 'UPDATE',
-					schema: 'public',
-					table: 'chats',
-				},
-				async (payload) => {
-					const allMembersSupabase = await supabase
-						.from('members')
-						.select()
-						.eq('user_id', store.getUserId())
-
-					const arrayChatsIds = allMembersSupabase.data?.map(
-						(member) => member.chat_id,
-					) as string[]
-
-					const allChatsSupabase = await supabase
-						.from('chats')
-						.select()
-						.in('id', arrayChatsIds)
-						.order('updated_at', { ascending: false })
-
-					if (allChatsSupabase.data) {
-						const allChats: IChat[] = allChatsSupabase.data.map(
-							(chatSupabase) => ({
-								cover: chatSupabase.cover,
-								created_at: chatSupabase.created_at,
-								id: chatSupabase.id,
-								title: chatSupabase.title,
-								type: chatSupabase.type,
-								updated_at: chatSupabase.updated_at,
-								isAdmin: chatSupabase.admin_id === store.getUserId(),
-							}),
-						)
-						setChats(allChats)
-					}
-				},
-			)
-			.subscribe()
-
+		SupabaseService.chatsInsert({ setChats, setConversations, store })
+		SupabaseService.chatsDelete({ setChats, setConversations })
+		SupabaseService.messagesInsert({ setConversations })
+		SupabaseService.chatsUpdate({ setChats, store })
+		SupabaseService.membersInsert({ setChats, setConversations, store })
+		SupabaseService.membersUpdate({
+			setChats,
+			setConversations,
+			store,
+			setSelectedChat,
+		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -219,13 +77,6 @@ export const ChatScreen: FC = observer(() => {
 			)
 		}
 	}, [isLoaded, isLogged, router, username, userId])
-
-	useEffect(() => {
-		if (chatsLoaded) {
-			// ChatService.getAllMessages({ chats, conversations, setConversations })
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [chatsLoaded])
 
 	useEffect(() => {
 		if (debouncedValue.length >= 3) {
@@ -278,7 +129,8 @@ export const ChatScreen: FC = observer(() => {
 		console.log(user)
 	}
 
-	console.log('CONVERSATIONS', conversations)
+	// console.log('CONVERSATIONS', conversations)
+	// console.log('ONLINE_USERS', store.getOnlineUsers())
 
 	return (
 		<>
@@ -394,17 +246,7 @@ export const ChatScreen: FC = observer(() => {
 									key={selectedChat.id}
 									ref={chatFeedRef}
 								/>
-								<ChatForm
-									// room={selectedChat.title}
-									// roomId={selectedChat.id}
-									// typeChat={selectedChat.type}
-									chat={selectedChat}
-									className="relative bottom-0"
-									afterSubmit={() => {
-										// scrollToBottom(chatFeedRef)
-										// moveChatToTop(selectedChat, setChats)
-									}}
-								/>
+								<ChatForm chat={selectedChat} className="relative bottom-0" />
 							</Box>
 						)}
 					</Box>
