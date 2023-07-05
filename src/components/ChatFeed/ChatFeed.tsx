@@ -1,9 +1,10 @@
 /* eslint-disable react/display-name */
 import { Message } from '../Message/Message'
 import { Box } from '@chakra-ui/react'
-import { Dispatch, SetStateAction, forwardRef } from 'react'
+import { Dispatch, SetStateAction, forwardRef, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { IChat, IConversation, IMessage } from '@/types/types'
+import { scrollToBottom } from '@/utils/scrollToBottom'
 
 interface ChatFeedProps {
 	conversation: IMessage[] | undefined

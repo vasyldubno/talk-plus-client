@@ -23,6 +23,7 @@ import { SupabaseService } from '@/services/supabaseService'
 import { IChat, IConversation, IMessage, ISocket } from '@/types/types'
 import { Loader } from '@/ui/Loader/Loader'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
+import { scrollToBottom } from '@/utils/scrollToBottom'
 
 export const ChatScreen: FC = observer(() => {
 	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
@@ -97,6 +98,11 @@ export const ChatScreen: FC = observer(() => {
 			setIsOpenRightSide(false)
 		}
 	}, [md])
+
+	useEffect(() => {
+		console.log('change conversation')
+		scrollToBottom(chatFeedRef)
+	}, [conversations])
 
 	const handleAddGroup = () => {
 		setIsAddGroup(true)
