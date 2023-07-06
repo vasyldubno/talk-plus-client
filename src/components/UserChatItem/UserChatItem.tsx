@@ -3,16 +3,16 @@ import { Box, Image, Text } from '@chakra-ui/react'
 import clsx from 'clsx'
 import { FC } from 'react'
 import { UserIcon } from '@/icons/UserIcon'
-import { IChat } from '@/types/types'
+import { IChat, IUser } from '@/types/types'
 
 interface UserChatItemProps {
-	chat: IChat
-	selectedChat: string | undefined
+	user: IUser
+	selectedChat: IChat | null
 	onClick: () => void
 }
 
 export const UserChatItem: FC<UserChatItemProps> = ({
-	chat,
+	user,
 	selectedChat,
 	onClick,
 }) => {
@@ -25,10 +25,10 @@ export const UserChatItem: FC<UserChatItemProps> = ({
 				)}
 				onClick={onClick}
 			>
-				{chat.cover ? (
+				{user.profile.avatar ? (
 					<Image
-						src={chat.cover}
-						alt={chat.title}
+						src={user.profile.avatar}
+						alt={user.profile.firstName}
 						width="auto"
 						height="70px"
 						className="object-cover rounded-full mr-3"
@@ -39,7 +39,7 @@ export const UserChatItem: FC<UserChatItemProps> = ({
 					</Box>
 				)}
 				<Box className="flex flex-col justify-center">
-					<Text className="text-white">{chat.title}</Text>
+					<Text className="text-white">{user.profile.firstName}</Text>
 				</Box>
 			</Box>
 		</>

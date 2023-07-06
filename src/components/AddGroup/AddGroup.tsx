@@ -6,11 +6,7 @@ import {
 	FormLabel,
 	Input,
 } from '@chakra-ui/react'
-import { Cloudinary } from '@cloudinary/url-gen'
-import ICloudinaryConfigurations from '@cloudinary/url-gen/config/interfaces/Config/ICloudinaryConfigurations'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
-import { v2 } from 'cloudinary'
 import { observer } from 'mobx-react-lite'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -19,7 +15,7 @@ import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
 import { ChatService } from '@/services/chatService'
-import { IChat, ISocket } from '@/types/types'
+import { IChat } from '@/types/types'
 import { FileInput } from '@/ui/FileInput/FileInput'
 
 interface AddGroupProps {
@@ -59,20 +55,12 @@ export const AddGroup: FC<AddGroupProps> = observer(
 			store.updateIsLoading(true)
 
 			if (imageFile) {
-				const formData = new FormData()
-				formData.append('file', imageFile)
-				formData.append(
-					'api_key',
-					process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
-				)
-				formData.append('upload_preset', 'test_test')
-
-				const response = await axios.post(
-					`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`,
-					formData,
+				const responseUploadImage = await ChatService.uploadImageToCloudinary(
+					imageFile,
+					store,
 				)
 
-				if (response) {
+				if (responseUploadImage) {
 					const user = await supabase.auth.getUser()
 
 					const newGroup = await supabase
@@ -80,17 +68,13 @@ export const AddGroup: FC<AddGroupProps> = observer(
 						.insert({
 							title: data.title,
 							admin_id: user.data.user?.id,
-							cover: response.data.secure_url,
+							cover: responseUploadImage.data.secure_url,
 							type: 'group',
 						})
 						.select()
 						.single()
 
 					if (newGroup.status === 201) {
-						// if (process.env.NEXT_PUBLIC_DEPLOY_VERCEL === 'FALSE') {
-						// 	ChatService.addMember(userId, newGroup.data.id)
-						// }
-
 						ChatService.addMember(userId, newGroup.data.id)
 
 						store.updateIsLoading(false)

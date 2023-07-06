@@ -1,12 +1,16 @@
 import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FC, useState } from 'react'
+import axios from 'axios'
+import { FC, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
+import { supabase } from '@/config/supabase'
 import { toastConfig } from '@/config/toastConfig'
+import { useStore } from '@/hooks/useStore'
 import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
+import { ChatService } from '@/services/chatService'
 import { FileInput } from '@/ui/FileInput/FileInput'
 
 interface ProfileSettingsProps {
@@ -17,25 +21,88 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 	const [imageBase64, setImageBase64] = useState('')
 	const [imageFile, setImageFile] = useState<File>()
 
+	const store = useStore()
+	const userId = store.getUserId()
+
 	const formSchema = z.object({
 		image: z.instanceof(FileList),
-		userName: z.string(),
 	})
 
 	type FormSchema = z.infer<typeof formSchema>
 
-	const { control, handleSubmit, register, setValue } = useForm<FormSchema>({
+	const { control, handleSubmit, formState } = useForm<FormSchema>({
 		resolver: zodResolver(formSchema),
 		mode: 'onChange',
 	})
 
 	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		console.log(data)
+		store.updateIsLoading(true)
+		const existAvatar = await supabase
+			.from('users')
+			.select('avatar')
+			.eq('id', userId)
+			.single()
+
+		if (existAvatar.data) {
+			const responseDeleteAvatar = await axios.post(
+				'/api/cloudinary/delete-image',
+				{ imageUrl: existAvatar.data.avatar },
+			)
+
+			if (responseDeleteAvatar) {
+				if (imageFile) {
+					const responseUploadImage = await ChatService.uploadImageToCloudinary(
+						imageFile,
+						store,
+					)
+					if (responseUploadImage) {
+						if (responseUploadImage.data) {
+							toast.success('Changes successful applied', toastConfig)
+							const res = await supabase
+								.from('users')
+								.update({ avatar: responseUploadImage.data.secure_url })
+								.eq('id', store.getUserId())
+							if (res.status) {
+								store.updateIsLoading(false)
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (existAvatar.error) {
+			if (imageFile) {
+				const responseUploadImage = await ChatService.uploadImageToCloudinary(
+					imageFile,
+					store,
+				)
+				if (responseUploadImage) {
+					if (responseUploadImage.data) {
+						toast.success('Changes successful applied', toastConfig)
+						const res = await supabase
+							.from('users')
+							.update({ avatar: responseUploadImage.data.secure_url })
+							.eq('id', store.getUserId())
+						if (res.status) {
+							store.updateIsLoading(false)
+						}
+					}
+				}
+			}
+		}
 	}
 
-	const handleSaveChanges = () => {
-		toast.success('Changes successful applied', toastConfig)
-	}
+	useEffect(() => {
+		if (userId) {
+			supabase
+				.from('users')
+				.select('avatar')
+				.eq('id', userId)
+				.single()
+				.then((res) => setImageBase64(res.data?.avatar))
+		}
+	}, [userId])
 
 	return (
 		<div className="h-screen">
@@ -66,15 +133,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({ onClose }) => {
 						/>
 					)}
 				/>
-				{/* <FormControl>
-					<FormLabel className="text-white">Username</FormLabel>
-					<Input {...register('userName')} className="text-white" />
-				</FormControl> */}
-				<Button
-					type="submit"
-					className="w-fit self-center mt-5"
-					onClick={handleSaveChanges}
-				>
+				<Button type="submit" className="w-fit self-center mt-5">
 					Save changes
 				</Button>
 			</form>

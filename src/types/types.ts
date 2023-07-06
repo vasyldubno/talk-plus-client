@@ -102,4 +102,9 @@ export interface ISocketEventsFromServer {
 
 export type ISocket = Socket<ISocketEventsFromServer, ISocketEventsToServer>
 
-type Test = 'a' | 'b'
+export interface ISupabaseChat {
+	title: string
+	cover: string | undefined
+	type: 'chat' | 'group'
+	admin_id: string | null
+}

@@ -32,12 +32,19 @@ export const Message = observer(
 			<Box
 				className={clsx(
 					'flex gap-2',
-					'ml-auto flex-row',
+					'flex-row',
 					chat?.type === 'chat' ? 'w-full md:w-[70%]' : 'w-[90%] lg:w-[100%]',
+					chat?.type === 'chat' && message.author.id === store.getUserId()
+						? 'flex-row-reverse mr-auto'
+						: 'ml-auto',
 				)}
 				ref={ref}
 			>
-				<Box className="h-10 w-10 self-end flex-shrink-0 relative">
+				<Box
+					className={`h-10 w-10 self-end flex-shrink-0 relative 
+         
+          `}
+				>
 					{message.author.avatar ? (
 						<Image
 							src={message.author.avatar}
@@ -68,7 +75,10 @@ export const Message = observer(
 				</Box>
 				<Box
 					className={clsx(
-						'text-gray-200 p-2 rounded-xl relative w-full bg-[var(--color-gray-light)]',
+						'text-gray-200 p-2 rounded-xl relative w-full ',
+						chat?.type === 'chat' && message.author.id === store.getUserId()
+							? 'bg-[var(--color-orange)]'
+							: 'bg-[var(--color-gray-light)]',
 					)}
 				>
 					<Text className="text-white text-sm">{message.author.firstName}</Text>

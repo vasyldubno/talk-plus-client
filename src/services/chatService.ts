@@ -1,6 +1,10 @@
+import axios from 'axios'
 import { Dispatch, SetStateAction } from 'react'
+import { toast } from 'react-toastify'
 import { MESSAGE_PER_PAGE } from '@/config/consts'
 import { supabase } from '@/config/supabase'
+import { toastConfig } from '@/config/toastConfig'
+import { UserStore } from '@/store/userStore'
 import { IChat, IConversation, IMessage } from '@/types/types'
 
 interface AddNewMessage {
@@ -63,6 +67,7 @@ export class ChatService {
 									author: {
 										firstName: author.data.firstName,
 										id: author.data.id,
+										avatar: author.data.avatar,
 									},
 									content: messageSupabase.content,
 									createdAt: messageSupabase.created_at,
@@ -253,5 +258,26 @@ export class ChatService {
 			messages: [],
 			isNextPage: false,
 		}
+	}
+
+	static async deleteChat(chat: IChat) {
+		await supabase.from('chats').delete().eq('id', chat.id)
+	}
+
+	static async uploadImageToCloudinary(image: File, store: UserStore) {
+		const formData = new FormData()
+		formData.append('file', image)
+		formData.append(
+			'api_key',
+			process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string,
+		)
+		formData.append('upload_preset', 'test_test')
+
+		const response = await axios.post(
+			`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`,
+			formData,
+		)
+
+		return response
 	}
 }

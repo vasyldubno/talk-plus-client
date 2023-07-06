@@ -23,6 +23,7 @@ import { ArrowLeftIcon } from '@/icons/ArrowLeftIcon'
 import { BinIcon } from '@/icons/BinIcon'
 import { ThreeDotsIcon } from '@/icons/ThreeDotsIcon'
 import { UserIcon } from '@/icons/UserIcon'
+import { ChatService } from '@/services/chatService'
 import { IChat, IConversation, ISocket, IUser } from '@/types/types'
 import { SearchInput } from '@/ui/SearchInput/SearchInput'
 
@@ -157,6 +158,7 @@ export const ChatHeader: FC<ChatHeaderProps> = observer(
 										className="text-sm"
 										paddingTop={1}
 										paddingBottom={1}
+										onClick={() => ChatService.deleteChat(chat)}
 									>
 										<Box className="flex items-center">
 											<BinIcon height="1rem" width="1rem" fill="black" />

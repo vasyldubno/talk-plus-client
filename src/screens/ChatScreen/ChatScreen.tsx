@@ -12,6 +12,7 @@ import { ChatHeader } from '@/components/ChatHeader/ChatHeader'
 import { ChatList } from '@/components/ChatList/ChatList'
 import { ChatMenu } from '@/components/ChatMenu/ChatMenu'
 import { ChatSearchInput } from '@/components/ChatSearchInput/ChatSearchInput'
+import { ChatUserList } from '@/components/ChatUserList/ChatUserList'
 import { ProfileSettings } from '@/components/ProfileSettings/ProfileSettings'
 import { UserChatItem } from '@/components/UserChatItem/UserChatItem'
 import { supabase } from '@/config/supabase'
@@ -80,19 +81,19 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}, [isLoaded, isLogged, router, username, userId])
 
-	useEffect(() => {
-		if (debouncedValue.length >= 3) {
-			console.log('')
-		} else {
-			setUsers([])
-		}
-	}, [debouncedValue])
+	// useEffect(() => {
+	// 	if (debouncedValue.length >= 3) {
+	// 		console.log('')
+	// 	} else {
+	// 		setUsers([])
+	// 	}
+	// }, [debouncedValue])
 
-	useEffect(() => {
-		if (searchValue.length <= 2) {
-			setUsers([])
-		}
-	}, [searchValue])
+	// useEffect(() => {
+	// 	if (searchValue.length <= 2) {
+	// 		setUsers([])
+	// 	}
+	// }, [searchValue])
 
 	useEffect(() => {
 		if (md) {
@@ -120,15 +121,18 @@ export const ChatScreen: FC = observer(() => {
 		}
 	}
 
-	const handleSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
+	const handleSearchValue = async (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(e.target.value)
-		if (e.target.value.length <= 2) {
-			setUsers([])
-		}
-	}
+		// if (searchValue.length <= 2) {
+		// 	setUsers([])
+		// } else {
+		// 	const responseUsers = await supabase
+		// 		.from('users')
+		// 		.select()
+		// 		.ilike('username', `%${searchValue}%`)
 
-	const handleUserFromSearch = (user: IChat) => {
-		console.log(user)
+		// 	console.log(responseUsers.data)
+		// }
 	}
 
 	// console.log('CONVERSATIONS', conversations)
@@ -186,17 +190,12 @@ export const ChatScreen: FC = observer(() => {
 							/>
 						</Box>
 						<Box className="p-2">
-							{users &&
-								users.map((user) => (
-									<UserChatItem
-										key={user.id}
-										chat={user}
-										selectedChat={selectedChat?.id.toString()}
-										onClick={() => {
-											handleUserFromSearch(user)
-										}}
-									/>
-								))}
+							<ChatUserList
+								selectedChat={selectedChat}
+								searchValue={searchValue}
+								setSearchValue={setSearchValue}
+								setSelectedChat={setSelectedChat}
+							/>
 						</Box>
 						<ChatList
 							chats={chats}
