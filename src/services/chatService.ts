@@ -110,7 +110,11 @@ export class ChatService {
 
 					return {
 						id: messageSupabase.id,
-						author: { firstName: author.data.firstName, id: author.data.id },
+						author: {
+							firstName: author.data.firstName,
+							id: author.data.id,
+							avatar: author.data.avatar,
+						},
 						content: messageSupabase.content,
 						createdAt: messageSupabase.created_at,
 					}
@@ -122,65 +126,6 @@ export class ChatService {
 		}
 		return []
 	}
-
-	// static async getAllMessages({
-	// 	chats,
-	// 	conversations,
-	// 	setConversations,
-	// }: {
-	// 	chats: IChat[]
-	// 	conversations: IConversation[]
-	// 	setConversations: Dispatch<SetStateAction<IConversation[]>>
-	// }) {
-	// 	chats.forEach(async (chat) => {
-	// 		const responseMessages = await supabase
-	// 			.from('messages')
-	// 			.select()
-	// 			.eq('chat_id', chat.id)
-	// 			.limit(14)
-	// 			.order('created_at', { ascending: false })
-
-	// 		if (responseMessages.data && responseMessages.data?.length > 0) {
-	// 			const currentConversation = conversations.find(
-	// 				(conversation) => conversation.id === chat.id,
-	// 			)
-
-	// 			const otherConversation = conversations.filter(
-	// 				(conversation) => conversation.id !== chat.id,
-	// 			)
-
-	// 			const messages: Promise<IMessage>[] = responseMessages.data.map(
-	// 				async (message) => {
-	// 					const author = await supabase
-	// 						.from('users')
-	// 						.select()
-	// 						.eq('id', message.author_id)
-	// 						.single()
-
-	// 					return {
-	// 						id: message.id,
-	// 						content: message.content,
-	// 						createdAt: message.created_at,
-	// 						author: {
-	// 							firstName: author.data.firstName,
-	// 						},
-	// 					}
-	// 				},
-	// 			)
-
-	// 			const resolvedMessages = await Promise.all(messages)
-
-	// 			setConversations([
-	// 				...otherConversation,
-	// 				{
-	// 					id: currentConversation?.id,
-	// 					title: currentConversation?.title,
-	// 					messages: resolvedMessages,
-	// 				},
-	// 			])
-	// 		}
-	// 	})
-	// }
 
 	static async addMember(userId: string | null, chatId: string) {
 		const resFindMember = await supabase

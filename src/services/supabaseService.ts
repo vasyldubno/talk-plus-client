@@ -248,6 +248,7 @@ export class SupabaseService {
 						author: {
 							firstName: author.data.firstName,
 							id: author.data.id,
+							avatar: author.data.avatar,
 						},
 					}
 

@@ -123,16 +123,6 @@ export const ChatScreen: FC = observer(() => {
 
 	const handleSearchValue = async (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(e.target.value)
-		// if (searchValue.length <= 2) {
-		// 	setUsers([])
-		// } else {
-		// 	const responseUsers = await supabase
-		// 		.from('users')
-		// 		.select()
-		// 		.ilike('username', `%${searchValue}%`)
-
-		// 	console.log(responseUsers.data)
-		// }
 	}
 
 	// console.log('CONVERSATIONS', conversations)

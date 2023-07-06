@@ -43,7 +43,10 @@ export const ModalAddNewUser: FC<ModalAddNewUserProps> = ({
 						...prev,
 						{
 							id: responseUser.id,
-							profile: { firstName: responseUser.firstName },
+							profile: {
+								firstName: responseUser.firstName,
+								avatar: responseUser.avatar,
+							},
 							username: responseUser.username,
 						},
 					])
