@@ -1,6 +1,5 @@
 import {
 	Box,
-	Button,
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
@@ -8,14 +7,16 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { observer } from 'mobx-react-lite'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { COLORS } from '@/config/colors'
 import { METADATA } from '@/config/metadata'
 import { supabase } from '@/config/supabase'
 import { useStore } from '@/hooks/useStore'
+import { Button } from '@/ui/Button/Button'
 import { DividerWithText } from '@/ui/DividerWithText/DividerWithText'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
 
@@ -34,9 +35,8 @@ export const LoginForm: FC = observer(() => {
 
 	const {
 		register,
-		formState: { errors },
+		formState: { errors, isSubmitting, isSubmitted },
 		handleSubmit,
-		getValues,
 	} = useForm<FormSchema>({
 		mode: 'onChange',
 		resolver: zodResolver(formSchema),
@@ -60,6 +60,18 @@ export const LoginForm: FC = observer(() => {
 			router.push('/chat')
 		}
 	}
+
+	useEffect(() => {
+		if (isSubmitting) {
+			store.updateIsLoading(true)
+		}
+	}, [isSubmitting])
+
+	useEffect(() => {
+		if (isSubmitted) {
+			store.updateIsLoading(false)
+		}
+	}, [isSubmitted])
 
 	return (
 		<>
@@ -102,14 +114,11 @@ export const LoginForm: FC = observer(() => {
 				</Box>
 
 				<Button
-					colorScheme="purple"
-					type="submit"
-					className="w-fit mt-5"
-					style={{ alignSelf: 'center' }}
-					aria-label="Login"
-				>
-					Login
-				</Button>
+					backgroundColor={COLORS.purple}
+					content="Login"
+					textColor="#fff"
+					hoverBackgroundColor={COLORS.purpleDark}
+				/>
 			</form>
 			<Box className="flex flex-col">
 				<DividerWithText
@@ -117,15 +126,12 @@ export const LoginForm: FC = observer(() => {
 					styles={{ marginTop: '3rem', marginBottom: '1rem' }}
 				/>
 				<Button
-					colorScheme="purple"
-					type="button"
-					className="w-fit"
-					style={{ alignSelf: 'center' }}
-					aria-label="Create New Account"
+					content="Create New Account"
+					backgroundColor={COLORS.purple}
+					textColor="#fff"
+					hoverBackgroundColor={COLORS.purpleDark}
 					onClick={() => router.push('/register')}
-				>
-					Create New Account
-				</Button>
+				/>
 			</Box>
 		</>
 	)

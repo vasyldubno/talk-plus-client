@@ -1,5 +1,5 @@
 import {
-	Button,
+	// Button,
 	Checkbox,
 	FormControl,
 	FormErrorMessage,
@@ -10,8 +10,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { COLORS } from '@/config/colors'
 import { supabase } from '@/config/supabase'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
+import { Button } from '@/ui/Button/Button'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
 
 interface RegisterFormProps {
@@ -131,13 +133,11 @@ export const RegisterForm: FC<RegisterFormProps> = ({ setIsSignUpSuccess }) => {
 					)}
 				</FormControl>
 				<Button
-					colorScheme="purple"
-					type="submit"
-					className="w-fit mt-5"
-					style={{ alignSelf: 'center' }}
-				>
-					Register
-				</Button>
+					content="Register"
+					backgroundColor={COLORS.purple}
+					hoverBackgroundColor={COLORS.purpleDark}
+					textColor="#fff"
+				/>
 			</form>
 			{errorMessage && (
 				<p className="text-center mt-10 text-red-500 font-bold text-lg">

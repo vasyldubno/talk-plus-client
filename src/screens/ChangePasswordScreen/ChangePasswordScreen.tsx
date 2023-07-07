@@ -1,17 +1,10 @@
-import {
-	Box,
-	Button,
-	Container,
-	FormControl,
-	FormLabel,
-	Input,
-} from '@chakra-ui/react'
+import { Box, Button, Container } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { observer } from 'mobx-react-lite'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { supabase } from '@/config/supabase'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
 import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
@@ -19,7 +12,6 @@ import { PasswordInput } from '@/ui/PasswordInput/PasswordInput'
 export const ChangePasswordScreen = observer(() => {
 	const store = useStore()
 	const sm = useMatchMedia('(max-width: 767px)')
-	const router = useRouter()
 
 	const formSchema = z
 		.object({
@@ -37,14 +29,17 @@ export const ChangePasswordScreen = observer(() => {
 		register,
 		formState: { errors, isSubmitSuccessful },
 		handleSubmit,
-		getValues,
 	} = useForm<FormSchema>({
 		mode: 'onChange',
 		resolver: zodResolver(formSchema),
 	})
 
 	const onSubmit: SubmitHandler<FormSchema> = async (data) => {
-		console.log('')
+		store.updateIsLoading(true)
+		const res = await supabase.auth.updateUser({ password: data.password })
+		if (res.data.user) {
+			store.updateIsLoading(false)
+		}
 	}
 
 	return (
@@ -76,10 +71,8 @@ export const ChangePasswordScreen = observer(() => {
 							name="confirmPassword"
 						/>
 						<Button
-							colorScheme="purple"
+							className="w-fit bg-[var(--color-purple)] text-white self-center hover:bg-[var(--color-purple-dark)]"
 							type="submit"
-							className="w-fit mt-5"
-							style={{ alignSelf: 'center' }}
 							aria-label="Change Password"
 						>
 							Change Password

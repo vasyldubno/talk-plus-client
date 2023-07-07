@@ -4,6 +4,7 @@ export const COLORS = {
 	'subscriber-online': '#9ceb9a',
 	purple: '#a95ffa',
 	'purple-50': 'rgb(169 95 250 / 50%)',
+	purpleDark: '#6B46C1',
 	white: '#fff',
 	black: '#000',
 	gray: '#aaaaaa',
