@@ -56,7 +56,5 @@ export const UserProvider: FC<{
 		})
 	}, [])
 
-	console.log('STORE', store)
-
 	return <UserContext.Provider value={store}>{children}</UserContext.Provider>
 })

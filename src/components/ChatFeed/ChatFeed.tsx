@@ -84,7 +84,12 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 		// const combinedRef = useCombinedRef(ref, chatFeedRef)
 		// console.log(combinedRef)
 
-		const messageRef = useRef<HTMLDivElement>(null)
+		// const messageRef = useRef<HTMLDivElement>(null)
+
+		// useEffect(() => {
+		// 	// @ts-ignore
+		// 	navigator.virtualKeyboard.overlaysContent = true
+		// }, [])
 
 		// useEffect(() => {
 		// 	if (messageRef.current) {
@@ -100,7 +105,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 					ref={chatFeedRef}
 					key={selectedChat?.id}
 				>
-					{/* {conversation &&
+					{conversation &&
 						conversation.map((message, index) => {
 							if (index === conversation.length - 1) {
 								return (
@@ -119,13 +124,18 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 									chat={selectedChat}
 								/>
 							)
-						})} */}
-					{conversation &&
+						})}
+					{/* {conversation &&
 						conversation.map((message, index) => (
 							<div key={index}>
 								{index === conversation.length - 1 ? (
 									<div key={message.id} ref={messageRef}>
-										<Message message={message} ref={ref} chat={selectedChat} />
+										<Message
+											key={message.id}
+											message={message}
+											ref={ref}
+											chat={selectedChat}
+										/>
 									</div>
 								) : (
 									<Message
@@ -135,7 +145,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 									/>
 								)}
 							</div>
-						))}
+						))} */}
 					{isFetchingNextPage && (
 						<p className="text-white text-center">Loading...</p>
 					)}
