@@ -234,7 +234,6 @@ export const ChatScreen: FC = observer(() => {
 									)}
 									setConversations={setConversations}
 									selectedChat={selectedChat}
-									key={selectedChat.id}
 									ref={chatFeedRef}
 								/>
 								<ChatForm chat={selectedChat} className="relative bottom-0" />
