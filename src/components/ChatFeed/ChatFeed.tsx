@@ -34,6 +34,18 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 		const lastMessageRef = useRef<HTMLDivElement>(null)
 
 		useEffect(() => {
+			if (conversation?.length) {
+				// @ts-ignore
+				lastMessageRef.current = document.getElementById(
+					`${conversation[0].id}`,
+				)
+				lastMessageRef.current?.scrollIntoView()
+			}
+		}, [conversation])
+
+		console.log(lastMessageRef)
+
+		useEffect(() => {
 			if (inView && selectedChat && isNextPage) {
 				setIsFetchingNextPage(true)
 				setPage(page + 1)
@@ -83,23 +95,6 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 			}
 		}, [inView])
 
-		// const combinedRef = useCombinedRef(ref, chatFeedRef)
-		// console.log(combinedRef)
-
-		// const messageRef = useRef<HTMLDivElement>(null)
-
-		// useEffect(() => {
-		// 	// @ts-ignore
-		// 	navigator.virtualKeyboard.overlaysContent = true
-		// }, [])
-
-		// useEffect(() => {
-		// 	if (messageRef.current) {
-		// 		console.log(messageRef.current)
-		// 		messageRef.current.scrollIntoView()
-		// 	}
-		// }, [conversation])
-
 		return (
 			<>
 				<Box
@@ -125,30 +120,10 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 									key={message.id}
 									chat={selectedChat}
 									ref={index === 0 ? lastMessageRef : null}
+									id={message.id}
 								/>
 							)
 						})}
-					{/* {conversation &&
-						conversation.map((message, index) => (
-							<div key={index}>
-								{index === conversation.length - 1 ? (
-									<div key={message.id} ref={messageRef}>
-										<Message
-											key={message.id}
-											message={message}
-											ref={ref}
-											chat={selectedChat}
-										/>
-									</div>
-								) : (
-									<Message
-										message={message}
-										key={message.id}
-										chat={selectedChat}
-									/>
-								)}
-							</div>
-						))} */}
 					{isFetchingNextPage && (
 						<p className="text-white text-center">Loading...</p>
 					)}

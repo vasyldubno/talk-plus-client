@@ -12,10 +12,11 @@ import { formatUTCDate } from '@/utils/formatUTCDate'
 interface MessageProps {
 	message: IMessage
 	chat: IChat | null
+	id?: string
 }
 
 export const Message = observer(
-	forwardRef<HTMLDivElement, MessageProps>(({ message, chat }, ref) => {
+	forwardRef<HTMLDivElement, MessageProps>(({ message, chat, id }, ref) => {
 		const [isOnline, setIsOnline] = useState(false)
 
 		const store = useStore()
@@ -28,12 +29,12 @@ export const Message = observer(
 			}
 		}, [userId, onlineUsers])
 
-		useEffect(() => {
-			if (ref) {
-				// @ts-ignore
-				ref?.current?.scrollIntoView
-			}
-		}, [ref])
+		// useEffect(() => {
+		// 	if (ref) {
+		// 		// @ts-ignore
+		// 		ref?.current?.scrollIntoView
+		// 	}
+		// }, [ref])
 
 		return (
 			<Box
@@ -46,6 +47,7 @@ export const Message = observer(
 						: 'ml-auto',
 				)}
 				ref={ref}
+				id={id}
 			>
 				<Box
 					className={`h-10 w-10 self-end flex-shrink-0 relative 
