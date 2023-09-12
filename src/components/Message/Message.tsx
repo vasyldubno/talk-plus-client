@@ -28,6 +28,13 @@ export const Message = observer(
 			}
 		}, [userId, onlineUsers])
 
+		useEffect(() => {
+			if (ref) {
+				// @ts-ignore
+				ref?.current?.scrollIntoView
+			}
+		}, [ref])
+
 		return (
 			<Box
 				className={clsx(

@@ -31,6 +31,8 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 		const [isNextPage, setIsNextPage] = useState(true)
 		const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
 
+		const lastMessageRef = useRef<HTMLDivElement>(null)
+
 		useEffect(() => {
 			if (inView && selectedChat && isNextPage) {
 				setIsFetchingNextPage(true)
@@ -122,6 +124,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 									message={message}
 									key={message.id}
 									chat={selectedChat}
+									ref={index === 0 ? lastMessageRef : null}
 								/>
 							)
 						})}

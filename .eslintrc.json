@@ -54,6 +54,7 @@
 		"no-plusplus": "off",
 		"react-hooks/exhaustive-deps": "off",
 		"no-param-reassign": "off",
-		"@typescript-eslint/ban-ts-comment": "off"
+		"@typescript-eslint/ban-ts-comment": "off",
+		"no-unused-expressions": "off"
 	}
 }
