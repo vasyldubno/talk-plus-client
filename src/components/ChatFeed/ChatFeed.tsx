@@ -44,7 +44,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 
 		useEffect(() => {
 			if (lastMessageRef) {
-				lastMessageRef.current?.scrollIntoView()
+				lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
 			}
 		}, [lastMessageRef])
 
