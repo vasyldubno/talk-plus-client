@@ -39,11 +39,14 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 				lastMessageRef.current = document.getElementById(
 					`${conversation[0].id}`,
 				)
-				lastMessageRef.current?.scrollIntoView()
 			}
 		}, [conversation])
 
-		console.log(lastMessageRef)
+		useEffect(() => {
+			if (lastMessageRef) {
+				lastMessageRef.current?.scrollIntoView()
+			}
+		}, [lastMessageRef])
 
 		useEffect(() => {
 			if (inView && selectedChat && isNextPage) {
