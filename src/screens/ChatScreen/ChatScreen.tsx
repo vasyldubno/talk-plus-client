@@ -215,7 +215,7 @@ export const ChatScreen: FC = observer(() => {
 						)}
 						{isProfileSettings && !selectedChat && <ProfileSettings />}
 						{selectedChat && (
-							<Box className="flex flex-col pb-3 h-[100vh] w-full">
+							<Box className="flex flex-col pb-3 h-[100dvh] w-full">
 								<ChatHeader
 									chat={selectedChat}
 									setChats={setChats}
