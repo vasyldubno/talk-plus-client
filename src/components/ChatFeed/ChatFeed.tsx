@@ -34,19 +34,21 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 		const lastMessageRef = useRef<HTMLDivElement>(null)
 
 		useEffect(() => {
-			if (conversation?.length) {
-				// @ts-ignore
-				lastMessageRef.current = document.getElementById(
-					`${conversation[0].id}`,
-				)
-			}
+			// if (conversation?.length) {
+			// 	// @ts-ignore
+			// 	lastMessageRef.current = document.getElementById(
+			// 		`${conversation[0].id}`,
+			// 	)
+			// }
+			console.log('Change Conversation')
+			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
 		}, [conversation])
 
-		useEffect(() => {
-			if (lastMessageRef) {
-				lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
-			}
-		}, [lastMessageRef])
+		// useEffect(() => {
+		// 	if (lastMessageRef) {
+		// 		lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+		// 	}
+		// }, [lastMessageRef])
 
 		useEffect(() => {
 			if (inView && selectedChat && isNextPage) {
@@ -105,24 +107,15 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 					ref={chatFeedRef}
 					key={selectedChat?.id}
 				>
+					<div style={{ color: 'red' }} ref={lastMessageRef} />
 					{conversation &&
 						conversation.map((message, index) => {
-							if (index === conversation.length - 1) {
-								return (
-									<Message
-										message={message}
-										key={message.id}
-										ref={ref}
-										chat={selectedChat}
-									/>
-								)
-							}
 							return (
 								<Message
 									message={message}
 									key={message.id}
 									chat={selectedChat}
-									ref={index === 0 ? lastMessageRef : null}
+									// ref={index === 0 ? lastMessageRef : null}
 									id={message.id}
 								/>
 							)
