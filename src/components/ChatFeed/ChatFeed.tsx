@@ -103,13 +103,12 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 		return (
 			<>
 				<Box
-					className="flex flex-col-reverse gap-3 overflow-y-scroll overflow-x-hidden scroll-smooth mt-auto mx-auto w-full lg:px-32 px-3"
+					className="flex flex-col gap-3 overflow-y-scroll overflow-x-hidden scroll-smooth mt-auto mx-auto w-full lg:px-32 px-3"
 					ref={chatFeedRef}
 					key={selectedChat?.id}
 				>
-					<div style={{ color: 'red' }} ref={lastMessageRef} />
 					{conversation &&
-						conversation.map((message, index) => {
+						conversation.reverse().map((message, index) => {
 							return (
 								<Message
 									message={message}
@@ -120,6 +119,9 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 								/>
 							)
 						})}
+					<div style={{ color: 'red' }} ref={lastMessageRef}>
+						test
+					</div>
 					{isFetchingNextPage && (
 						<p className="text-white text-center">Loading...</p>
 					)}
