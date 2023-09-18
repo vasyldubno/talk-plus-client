@@ -267,7 +267,7 @@ export class SupabaseService {
 								{
 									id: currentConversation?.id,
 									title: currentConversation?.title,
-									messages: [...currentConversation.messages, newMessage],
+									messages: [newMessage, ...currentConversation.messages],
 								},
 							]
 						}

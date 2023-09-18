@@ -3,6 +3,7 @@ import { Message } from '../Message/Message'
 import { Box } from '@chakra-ui/react'
 import {
 	Dispatch,
+	FC,
 	SetStateAction,
 	forwardRef,
 	useEffect,
@@ -20,114 +21,102 @@ interface ChatFeedProps {
 	selectedChat: IChat | null
 }
 
-export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
-	({ conversation, selectedChat, setConversations }, chatFeedRef) => {
-		const { ref, inView } = useInView({
-			threshold: 0.1,
-			triggerOnce: true,
-		})
+export const ChatFeed: FC<ChatFeedProps> = ({
+	conversation,
+	selectedChat,
+	setConversations,
+}) => {
+	const { ref, inView } = useInView({
+		threshold: 0.1,
+		triggerOnce: true,
+	})
 
-		console.log(conversation)
+	const [page, setPage] = useState(1)
+	const [isNextPage, setIsNextPage] = useState(true)
+	const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
 
-		const [page, setPage] = useState(1)
-		const [isNextPage, setIsNextPage] = useState(true)
-		const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
+	const lastMessageRef = useRef<HTMLDivElement>(null)
 
-		const lastMessageRef = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+	}, [conversation])
 
-		useEffect(() => {
-			// if (conversation?.length) {
-			// 	// @ts-ignore
-			// 	lastMessageRef.current = document.getElementById(
-			// 		`${conversation[0].id}`,
-			// 	)
-			// }
-			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
-		}, [conversation])
-
-		// useEffect(() => {
-		// 	if (lastMessageRef) {
-		// 		lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
-		// 	}
-		// }, [lastMessageRef])
-
-		useEffect(() => {
-			if (inView && selectedChat && isNextPage) {
-				setIsFetchingNextPage(true)
-				setPage(page + 1)
-				ChatService.getMessagesByPage({
-					page: page + 1,
-					chatId: selectedChat.id,
-				}).then(async (res) => {
-					setIsNextPage(res.isNextPage)
-					const messagesPromise: Promise<IMessage>[] = res.messages.map(
-						async (message) => {
-							const author = await ChatService.getAuthor({
-								authorId: message.author_id,
-							})
-							return {
-								id: message.id,
-								content: message.content,
-								createdAt: message.created_at,
-								author: {
-									firstName: author.firstName,
-									id: author.id,
-								},
-							}
-						},
-					)
-					const messages = await Promise.all(messagesPromise)
-					setConversations((prev) => {
-						const currentConversation = prev.find(
-							(conv) => conv.id === selectedChat.id,
-						)
-						const restConversations = prev.filter(
-							(rConv) => rConv.id !== selectedChat.id,
-						)
-						if (currentConversation) {
-							return [
-								...restConversations,
-								{
-									id: currentConversation?.id,
-									title: currentConversation?.title,
-									messages: [...currentConversation.messages, ...messages],
-								},
-							]
+	useEffect(() => {
+		if (inView && selectedChat && isNextPage) {
+			setIsFetchingNextPage(true)
+			setPage(page + 1)
+			ChatService.getMessagesByPage({
+				page: page + 1,
+				chatId: selectedChat.id,
+			}).then(async (res) => {
+				setIsNextPage(res.isNextPage)
+				const messagesPromise: Promise<IMessage>[] = res.messages.map(
+					async (message) => {
+						const author = await ChatService.getAuthor({
+							authorId: message.author_id,
+						})
+						return {
+							id: message.id,
+							content: message.content,
+							createdAt: message.created_at,
+							author: {
+								firstName: author.firstName,
+								id: author.id,
+							},
 						}
-						return prev
-					})
-					setIsFetchingNextPage(false)
+					},
+				)
+				const messages = await Promise.all(messagesPromise)
+				setConversations((prev) => {
+					const currentConversation = prev.find(
+						(conv) => conv.id === selectedChat.id,
+					)
+					const restConversations = prev.filter(
+						(rConv) => rConv.id !== selectedChat.id,
+					)
+					if (currentConversation) {
+						return [
+							...restConversations,
+							{
+								id: currentConversation?.id,
+								title: currentConversation?.title,
+								messages: [...currentConversation.messages, ...messages],
+							},
+						]
+					}
+					return prev
 				})
-			}
-		}, [inView])
+				setIsFetchingNextPage(false)
+			})
+		}
+	}, [inView])
 
-		return (
-			<>
-				<Box
-					className="flex flex-col gap-3 overflow-y-scroll overflow-x-hidden scroll-smooth mt-auto mx-auto w-full lg:px-32 px-3"
-					ref={chatFeedRef}
-					key={selectedChat?.id}
-				>
-					{conversation &&
-						conversation.reverse().map((message, index) => {
-							return (
-								<Message
-									message={message}
-									key={message.id}
-									chat={selectedChat}
-									// ref={index === 0 ? lastMessageRef : null}
-									id={message.id}
-								/>
-							)
-						})}
-					<div style={{ color: 'red' }} ref={lastMessageRef}>
-						test
-					</div>
-					{isFetchingNextPage && (
-						<p className="text-white text-center">Loading...</p>
-					)}
-				</Box>
-			</>
-		)
-	},
-)
+	return (
+		<>
+			<Box
+				className="flex flex-col-reverse gap-3 overflow-y-scroll overflow-x-hidden scroll-smooth mt-auto mx-auto w-full lg:px-32 px-3"
+				key={selectedChat?.id}
+			>
+				<div style={{ color: 'red' }} ref={lastMessageRef}>
+					test
+				</div>
+
+				{conversation &&
+					conversation.map((message, index) => {
+						return (
+							<Message
+								message={message}
+								key={message.id}
+								chat={selectedChat}
+								id={message.id}
+							/>
+						)
+					})}
+
+				{isFetchingNextPage && (
+					<p className="text-white text-center">Loading...</p>
+				)}
+			</Box>
+		</>
+	)
+}
