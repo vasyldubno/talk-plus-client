@@ -51,12 +51,12 @@ export const ChatForm: FC<IChatFormProps> = ({ className, chat }) => {
 		}
 	}
 
-	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			e.preventDefault()
-			handleClick()
-		}
-	}
+	// const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+	// 	if (e.key === 'Enter') {
+	// 		e.preventDefault()
+	// 		handleClick()
+	// 	}
+	// }
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()

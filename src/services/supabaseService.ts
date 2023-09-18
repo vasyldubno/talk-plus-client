@@ -263,12 +263,12 @@ export class SupabaseService {
 
 						if (currentConversation) {
 							return [
+								...otherConversations,
 								{
 									id: currentConversation?.id,
 									title: currentConversation?.title,
-									messages: [newMessage, ...currentConversation.messages],
+									messages: [...currentConversation.messages, newMessage],
 								},
-								...otherConversations,
 							]
 						}
 						return prev

@@ -27,6 +27,8 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 			triggerOnce: true,
 		})
 
+		console.log(conversation)
+
 		const [page, setPage] = useState(1)
 		const [isNextPage, setIsNextPage] = useState(true)
 		const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
@@ -40,7 +42,6 @@ export const ChatFeed = forwardRef<HTMLDivElement, ChatFeedProps>(
 			// 		`${conversation[0].id}`,
 			// 	)
 			// }
-			console.log('Change Conversation')
 			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
 		}, [conversation])
 
