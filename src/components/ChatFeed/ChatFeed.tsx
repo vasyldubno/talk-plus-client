@@ -19,10 +19,15 @@ interface Props {
 	conversation: IMessage[] | undefined
 	setConversations: Dispatch<SetStateAction<IConversation[]>>
 	selectedChat: IChat | null
+	updateRef: boolean
+	setUpdateRef: Dispatch<SetStateAction<boolean>>
 }
 
 export const ChatFeed = forwardRef<HTMLDivElement, Props>(
-	({ conversation, selectedChat, setConversations }, lastRef) => {
+	(
+		{ conversation, selectedChat, setConversations, setUpdateRef, updateRef },
+		lastRef,
+	) => {
 		console.log(conversation)
 		const { ref, inView } = useInView({
 			threshold: 0.1,
@@ -33,9 +38,14 @@ export const ChatFeed = forwardRef<HTMLDivElement, Props>(
 		const [isNextPage, setIsNextPage] = useState(true)
 		const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
 
-		// useEffect(() => {
-		// 	lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
-		// }, [conversation])
+		useEffect(() => {
+			// lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+			if (updateRef && lastRef) {
+				// @ts-ignore
+				lastRef?.current?.scrollIntoView({ behavior: 'smooth' })
+				setUpdateRef(false)
+			}
+		}, [conversation])
 
 		useEffect(() => {
 			if (inView && selectedChat && isNextPage) {

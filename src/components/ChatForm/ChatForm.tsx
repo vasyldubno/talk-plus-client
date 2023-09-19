@@ -9,9 +9,11 @@ import {
 import clsx from 'clsx'
 import {
 	ChangeEvent,
+	Dispatch,
 	FC,
 	FormEvent,
 	KeyboardEvent,
+	SetStateAction,
 	forwardRef,
 	useEffect,
 	useRef,
@@ -26,10 +28,11 @@ import { IChat } from '@/types/types'
 interface Props {
 	chat: IChat
 	className?: string
+	setUpdateRef: Dispatch<SetStateAction<boolean>>
 }
 
 export const ChatForm = forwardRef<HTMLDivElement, Props>(
-	({ chat, className }, lastRef) => {
+	({ chat, className, setUpdateRef }, lastRef) => {
 		const [value, setValue] = useState('')
 		const [isTouchScreen, setIsTouchScreen] = useState(false)
 
@@ -45,13 +48,14 @@ export const ChatForm = forwardRef<HTMLDivElement, Props>(
 					userId: store.getUserId(),
 					afterSubmit: () => {
 						setValue('')
-						if (lastRef) {
-							// @ts-ignore
-							lastRef.current?.scrollIntoView({
-								behavior: 'smooth',
-								block: 'end',
-							})
-						}
+						setUpdateRef(true)
+						// if (lastRef) {
+						// 	// @ts-ignore
+						// 	lastRef.current?.scrollIntoView({
+						// 		// behavior: 'smooth',
+						// 		block: 'start',
+						// 	})
+						// }
 					},
 				})
 			}

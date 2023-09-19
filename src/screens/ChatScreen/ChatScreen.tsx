@@ -36,6 +36,7 @@ export const ChatScreen: FC = observer(() => {
 	const [chatsLoaded, setChatsLoaded] = useState(false)
 	const [isOpenLeftSide, setIsOpenLeftSide] = useState(true)
 	const [isOpenRightSide, setIsOpenRightSide] = useState(true)
+	const [updateRef, setUpdateRef] = useState(false)
 
 	const md = useMatchMedia('(max-width: 1024px)')
 
@@ -238,12 +239,15 @@ export const ChatScreen: FC = observer(() => {
 									selectedChat={selectedChat}
 									// ref={chatFeedRef}
 									ref={lastMessageRef}
+									setUpdateRef={setUpdateRef}
+									updateRef={updateRef}
 								/>
 								{/* <div ref={lastMessageRef} /> */}
 								<ChatForm
 									chat={selectedChat}
 									ref={lastMessageRef}
 									className="relative bottom-0"
+									setUpdateRef={setUpdateRef}
 								/>
 							</Box>
 						)}
