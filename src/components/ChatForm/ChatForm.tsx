@@ -59,11 +59,11 @@ export const ChatForm = forwardRef<HTMLDivElement, Props>(
 					},
 				})
 			}
-			if (isTouchScreen) {
-				inputRef.current?.blur()
-			} else {
-				inputRef.current?.focus()
-			}
+			// if (isTouchScreen) {
+			// 	inputRef.current?.blur()
+			// } else {
+			// 	inputRef.current?.focus()
+			// }
 		}
 
 		// const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
