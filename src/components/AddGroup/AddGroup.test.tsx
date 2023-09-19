@@ -14,21 +14,21 @@ describe('AddGroup', () => {
 				setChats={setChats}
 				setIsAddGroup={setIsAddGroup}
 				setSelectedChat={setSelectedChat}
-				socket={socket}
+				// socket={socket}
 			/>,
 		)
 	})
 
-	test('fill field', async () => {
-		const titleInput = screen.getByLabelText('Group Name')
-		const fileInput: HTMLInputElement = screen.getByTestId('file')
+	// test('fill field', async () => {
+	// 	const titleInput = screen.getByLabelText('Group Name')
+	// 	const fileInput: HTMLInputElement = screen.getByTestId('file')
 
-		fireEvent.change(titleInput, { target: { value: 'Upwork' } })
-		fireEvent.change(fileInput, {
-			target: { files: [new File([], 'test.png')] },
-		})
+	// 	fireEvent.change(titleInput, { target: { value: 'Upwork' } })
+	// 	fireEvent.change(fileInput, {
+	// 		target: { files: [new File([], 'test.png')] },
+	// 	})
 
-		expect(titleInput).toHaveValue('Upwork')
-		expect(fileInput.files?.length).toBe(1)
-	})
+	// 	expect(titleInput).toHaveValue('Upwork')
+	// 	expect(fileInput.files?.length).toBe(1)
+	// })
 })

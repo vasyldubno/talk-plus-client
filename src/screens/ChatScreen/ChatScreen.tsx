@@ -44,6 +44,7 @@ export const ChatScreen: FC = observer(() => {
 	const router = useRouter()
 
 	const chatFeedRef = useRef<HTMLDivElement>(null)
+	const lastMessageRef = useRef<HTMLDivElement>(null)
 
 	const store = useStore()
 	const isLogged = store.getIsLogged()
@@ -127,6 +128,7 @@ export const ChatScreen: FC = observer(() => {
 
 	// console.log('CONVERSATIONS', conversations)
 	// console.log('ONLINE_USERS', store.getOnlineUsers())
+	console.log(lastMessageRef)
 
 	return (
 		<>
@@ -235,8 +237,14 @@ export const ChatScreen: FC = observer(() => {
 									setConversations={setConversations}
 									selectedChat={selectedChat}
 									// ref={chatFeedRef}
+									ref={lastMessageRef}
 								/>
-								<ChatForm chat={selectedChat} className="relative bottom-0" />
+								{/* <div ref={lastMessageRef} /> */}
+								<ChatForm
+									chat={selectedChat}
+									ref={lastMessageRef}
+									className="relative bottom-0"
+								/>
 							</Box>
 						)}
 					</Box>
