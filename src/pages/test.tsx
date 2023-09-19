@@ -57,7 +57,6 @@ const TestPage = () => {
 					onSubmit={(e) => {
 						e.preventDefault()
 						setMessages((prev) => [...prev, { id: 200, content: value }])
-						// ref.current?.scrollIntoView({ block: 'end' })
 						setUpdateRef(true)
 					}}
 				>

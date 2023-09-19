@@ -38,11 +38,14 @@ export const ChatFeed = forwardRef<HTMLDivElement, Props>(
 		const [isNextPage, setIsNextPage] = useState(true)
 		const [isFetchingNextPage, setIsFetchingNextPage] = useState(false)
 
+		const emptyRef = useRef<HTMLDivElement>(null)
+
 		useEffect(() => {
 			// lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
-			if (updateRef && lastRef) {
+			if (updateRef) {
 				// @ts-ignore
-				lastRef?.current?.scrollIntoView({ behavior: 'smooth' })
+				// lastRef?.current?.scrollIntoView({ behavior: 'smooth' })
+				emptyRef.current?.scrollIntoView()
 				setUpdateRef(false)
 			}
 		}, [conversation])
@@ -107,7 +110,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, Props>(
 					key={selectedChat?.id}
 					// ref={lastRef}
 				>
-					<div style={{ color: 'red' }} ref={lastRef} />
+					<div style={{ color: 'red' }} ref={emptyRef} />
 
 					{conversation &&
 						conversation.map((message, index) => {
