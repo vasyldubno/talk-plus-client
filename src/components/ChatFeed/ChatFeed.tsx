@@ -24,11 +24,13 @@ interface Props {
 }
 
 export const ChatFeed = forwardRef<HTMLDivElement, Props>(
-	(
-		{ conversation, selectedChat, setConversations, setUpdateRef, updateRef },
-		lastRef,
-	) => {
-		console.log(conversation)
+	({
+		conversation,
+		selectedChat,
+		setConversations,
+		setUpdateRef,
+		updateRef,
+	}) => {
 		const { ref, inView } = useInView({
 			threshold: 0.1,
 			triggerOnce: true,
@@ -41,10 +43,7 @@ export const ChatFeed = forwardRef<HTMLDivElement, Props>(
 		const emptyRef = useRef<HTMLDivElement>(null)
 
 		useEffect(() => {
-			// lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
 			if (updateRef) {
-				// @ts-ignore
-				// lastRef?.current?.scrollIntoView({ behavior: 'smooth' })
 				emptyRef.current?.scrollIntoView()
 				setUpdateRef(false)
 			}
@@ -100,15 +99,11 @@ export const ChatFeed = forwardRef<HTMLDivElement, Props>(
 			}
 		}, [inView])
 
-		// console.log(lastRef)
-
 		return (
 			<>
 				<Box
 					className="flex flex-col-reverse gap-3 overflow-y-scroll overflow-hidden scroll-smooth mt-auto mx-auto w-full lg:px-32 px-3"
-					// style={{ border: '1px solid red' }}
 					key={selectedChat?.id}
-					// ref={lastRef}
 				>
 					<div style={{ color: 'red' }} ref={emptyRef} />
 

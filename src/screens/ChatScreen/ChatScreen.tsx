@@ -129,7 +129,8 @@ export const ChatScreen: FC = observer(() => {
 
 	// console.log('CONVERSATIONS', conversations)
 	// console.log('ONLINE_USERS', store.getOnlineUsers())
-	console.log(lastMessageRef)
+	// console.log(lastMessageRef)
+	console.log('updateRef', updateRef)
 
 	return (
 		<>
@@ -237,15 +238,13 @@ export const ChatScreen: FC = observer(() => {
 									)}
 									setConversations={setConversations}
 									selectedChat={selectedChat}
-									// ref={chatFeedRef}
-									ref={lastMessageRef}
 									setUpdateRef={setUpdateRef}
 									updateRef={updateRef}
 								/>
 								{/* <div ref={lastMessageRef} /> */}
 								<ChatForm
 									chat={selectedChat}
-									ref={lastMessageRef}
+									// ref={lastMessageRef}
 									className="relative bottom-0"
 									setUpdateRef={setUpdateRef}
 								/>
