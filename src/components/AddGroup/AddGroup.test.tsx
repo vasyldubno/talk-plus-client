@@ -21,18 +21,10 @@ jest.mock('@/hooks/useMatchMedia', () => {
 })
 
 describe('AddGroup', () => {
-	const setChats = jest.fn()
 	const setIsAddGroup = jest.fn()
-	const setSelectedChat = jest.fn()
 
 	beforeEach(() => {
-		render(
-			<AddGroup
-				setChats={setChats}
-				setIsAddGroup={setIsAddGroup}
-				setSelectedChat={setSelectedChat}
-			/>,
-		)
+		render(<AddGroup setIsAddGroup={setIsAddGroup} />)
 	})
 
 	test('fill field', async () => {
