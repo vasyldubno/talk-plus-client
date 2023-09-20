@@ -132,6 +132,14 @@ export const ChatScreen: FC = observer(() => {
 	// console.log(lastMessageRef)
 	// console.log('updateRef', updateRef)
 	const [value, setValue] = useState('')
+	const ref = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		console.log('useEffect')
+		if (ref && updateRef) {
+			ref.current?.scrollIntoView()
+			setUpdateRef(false)
+		}
+	}, [conversations])
 
 	return (
 		<>
@@ -265,6 +273,7 @@ export const ChatScreen: FC = observer(() => {
 											</p>
 										),
 									)}
+									<div ref={ref} />
 								</div>
 								<form
 									onSubmit={(e) => {
@@ -275,6 +284,7 @@ export const ChatScreen: FC = observer(() => {
 											userId: store.getUserId(),
 											afterSubmit: () => {
 												setValue('')
+												setUpdateRef(true)
 											},
 										})
 									}}
