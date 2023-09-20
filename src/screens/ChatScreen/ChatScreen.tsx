@@ -263,6 +263,7 @@ export const ChatScreen: FC = observer(() => {
 										overflow: 'scroll',
 									}}
 								>
+									<div ref={ref} />
 									{getCurrentConversation(conversations, selectedChat)?.map(
 										(item) => (
 											<p
@@ -273,7 +274,6 @@ export const ChatScreen: FC = observer(() => {
 											</p>
 										),
 									)}
-									<div ref={ref} />
 								</div>
 								<form
 									onSubmit={(e) => {
