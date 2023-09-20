@@ -19,14 +19,12 @@ import { IChat } from '@/types/types'
 import { FileInput } from '@/ui/FileInput/FileInput'
 
 interface AddGroupProps {
-	setChats: Dispatch<SetStateAction<IChat[]>>
 	setIsAddGroup: Dispatch<SetStateAction<boolean>>
-	setSelectedChat: Dispatch<SetStateAction<IChat | null>>
 	onClose?: () => void
 }
 
 export const AddGroup: FC<AddGroupProps> = observer(
-	({ setChats, setIsAddGroup, setSelectedChat, onClose }) => {
+	({ setIsAddGroup, onClose }) => {
 		const store = useStore()
 		const isLoading = store.getIsLoading()
 		const userId = store.getUserId()
@@ -50,6 +48,8 @@ export const AddGroup: FC<AddGroupProps> = observer(
 			mode: 'onChange',
 			resolver: zodResolver(formSchema),
 		})
+
+		console.log(errors)
 
 		const onSubmit: SubmitHandler<FormSchema> = async (data) => {
 			store.updateIsLoading(true)
@@ -96,29 +96,36 @@ export const AddGroup: FC<AddGroupProps> = observer(
 					<h1 className="font-bold text-white text-2xl py-2">New Group</h1>
 					<div className="lg:hidden" />
 				</Box>
-				<Box className="">
+				<Box>
 					{!isLoading && (
 						<form
 							onSubmit={handleSubmit(onSubmit)}
 							encType="multipart/form-data"
 							className="px-5 pb-5 mt-5 sm:max-w-[50vw] mx-auto my-0 text-center flex flex-col gap-10 bg-[var(--color-dark-gray)]"
 						>
-							<Controller
-								name="file"
-								control={control}
-								render={({ field: { onChange } }) => (
-									<FileInput
-										onChange={onChange}
-										error={errors.file}
-										setImageBase64={setImageBase64}
-										imageBase64={imageBase64}
-										setImageFile={setImageFile}
-										className="flex justify-center"
-										heigth="h-52"
-										width="w-52"
-									/>
+							<FormControl isInvalid={!!errors.file}>
+								<Controller
+									name="file"
+									control={control}
+									render={({ field: { onChange } }) => (
+										<FileInput
+											onChange={onChange}
+											error={errors.file}
+											setImageBase64={setImageBase64}
+											imageBase64={imageBase64}
+											setImageFile={setImageFile}
+											className="flex justify-center"
+											heigth="h-52"
+											width="w-52"
+										/>
+									)}
+								/>
+								{errors.file && (
+									<FormErrorMessage justifyContent="center">
+										{errors.file.message}
+									</FormErrorMessage>
 								)}
-							/>
+							</FormControl>
 							<FormControl isInvalid={!!errors.title} className="text-white">
 								<FormLabel>Group Name</FormLabel>
 								<Input

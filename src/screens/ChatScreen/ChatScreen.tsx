@@ -66,7 +66,6 @@ export const ChatScreen: FC = observer(() => {
 			store,
 			setSelectedChat,
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	useEffect(() => {
@@ -111,21 +110,6 @@ export const ChatScreen: FC = observer(() => {
 		setSearchValue(e.target.value)
 	}
 
-	// console.log('CONVERSATIONS', conversations)
-	// console.log('ONLINE_USERS', store.getOnlineUsers())
-	console.log('SELECTED_CONVERSATION', selectedConversation)
-	// console.log(lastMessageRef)
-	// console.log('updateRef', updateRef)
-	// const [value, setValue] = useState('')
-	// const ref = useRef<HTMLDivElement>(null)
-	// useEffect(() => {
-	// 	console.log('useEffect')
-	// 	if (ref && updateRef) {
-	// 		ref.current?.scrollIntoView()
-	// 		setUpdateRef(false)
-	// 	}
-	// }, [conversations])
-
 	return (
 		<>
 			{isLogged && isLoaded && (
@@ -136,9 +120,7 @@ export const ChatScreen: FC = observer(() => {
 						!isOpenRightSide && (
 							<Box className="bg-[var(--color-dark-gray)] w-screen">
 								<AddGroup
-									setChats={setChats}
 									setIsAddGroup={setIsAddGroup}
-									setSelectedChat={setSelectedChat}
 									onClose={() => {
 										setIsOpenLeftSide(true)
 										setIsOpenRightSide(false)
@@ -206,11 +188,7 @@ export const ChatScreen: FC = observer(() => {
 						)}
 					>
 						{isAddGroup && !selectedChat && (
-							<AddGroup
-								setChats={setChats}
-								setIsAddGroup={setIsAddGroup}
-								setSelectedChat={setSelectedChat}
-							/>
+							<AddGroup setIsAddGroup={setIsAddGroup} />
 						)}
 						{isProfileSettings && !selectedChat && <ProfileSettings />}
 						{selectedChat && (
@@ -238,48 +216,6 @@ export const ChatScreen: FC = observer(() => {
 									className="relative bottom-0"
 									setUpdateRef={setUpdateRef}
 								/>
-								{/* <div
-									style={{
-										display: 'flex',
-										flexDirection: 'column',
-										overflow: 'scroll',
-									}}
-								>
-									{getCurrentConversation(conversations, selectedChat)
-										?.reverse()
-										.map((item) => (
-											<p
-												key={item.id}
-												style={{ color: 'white', fontSize: '2rem' }}
-											>
-												{item.content}
-											</p>
-										))}
-									<div ref={ref} />
-								</div>
-								<form
-									onSubmit={(e) => {
-										e.preventDefault()
-										ChatService.addNewMessage({
-											content: value,
-											chatId: selectedChat.id,
-											userId: store.getUserId(),
-											afterSubmit: () => {
-												setValue('')
-												setUpdateRef(true)
-											},
-										})
-									}}
-								>
-									<input
-										type="text"
-										value={value}
-										onChange={(e) => setValue(e.target.value)}
-									/>
-									<button type="submit" style={{ color: 'white' }}>
-										add
-									</button>
-								</form> */}
 							</Box>
 						)}
 					</Box>

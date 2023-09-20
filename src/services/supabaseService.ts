@@ -113,7 +113,7 @@ export class SupabaseService {
 					schema: 'public',
 					table: 'members',
 				},
-				async (payload) => {
+				async () => {
 					const supabaseMembers = await supabase
 						.from('members')
 						.select()
@@ -157,13 +157,6 @@ export class SupabaseService {
 						}
 						setSelectedChat(null)
 					}
-
-					// setChats((prev) => {
-					// 	const updatedChats = prev.filter(
-					// 		(chat) => chat.id !== payload.old.id,
-					// 	)
-					// 	return prev
-					// })
 				},
 			)
 			.subscribe()
