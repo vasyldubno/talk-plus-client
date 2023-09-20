@@ -1,4 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { useStore } from '@/hooks/useStore'
+import { ChatService } from '@/services/chatService'
+import { IChat, IConversation } from '@/types/types'
 
 const TestPage = () => {
 	const [messages, setMessages] = useState([
@@ -25,8 +28,20 @@ const TestPage = () => {
 	])
 	const [value, setValue] = useState('')
 	const [updateRef, setUpdateRef] = useState(true)
+	const [chats, setChats] = useState<IChat[]>([])
+	const [conversations, setConversations] = useState<IConversation[]>([])
 
 	const ref = useRef<HTMLDivElement>(null)
+	const store = useStore()
+	const userId = store.getUserId()
+
+	useEffect(() => {
+		if (userId) {
+			ChatService.getAllChats(userId, setChats, setConversations, () => {
+				console.log()
+			})
+		}
+	}, [userId])
 
 	useEffect(() => {
 		if (updateRef) {
@@ -34,6 +49,9 @@ const TestPage = () => {
 			setUpdateRef(false)
 		}
 	}, [messages])
+
+	console.log('chats', chats)
+	console.log('conversations', conversations)
 
 	return (
 		<div style={{ height: '100dvh', display: 'flex', flexDirection: 'column' }}>

@@ -26,9 +26,12 @@ import { Loader } from '@/ui/Loader/Loader'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
 
 export const ChatScreen: FC = observer(() => {
-	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
 	const [conversations, setConversations] = useState<IConversation[]>([])
 	const [chats, setChats] = useState<IChat[]>([])
+	const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
+	const [selectedConversation, setSelectedConversation] = useState<
+		IMessage[] | null
+	>(null)
 	const [searchValue, setSearchValue] = useState('')
 	const [users, setUsers] = useState<IChat[]>([])
 	const [isAddGroup, setIsAddGroup] = useState(false)
@@ -53,6 +56,13 @@ export const ChatScreen: FC = observer(() => {
 	const isLoading = store.getIsLoading()
 	const username = store.getUsername()
 	const userId = store.getUserId()
+
+	useEffect(() => {
+		if (selectedChat) {
+			const current = getCurrentConversation(conversations, selectedChat)
+			setSelectedConversation(current ?? null)
+		}
+	}, [selectedChat, conversations])
 
 	useEffect(() => {
 		SupabaseService.chatsInsert({ setChats, setConversations, store })
@@ -129,17 +139,18 @@ export const ChatScreen: FC = observer(() => {
 
 	// console.log('CONVERSATIONS', conversations)
 	// console.log('ONLINE_USERS', store.getOnlineUsers())
+	console.log('SELECTED_CONVERSATION', selectedConversation)
 	// console.log(lastMessageRef)
 	// console.log('updateRef', updateRef)
-	const [value, setValue] = useState('')
-	const ref = useRef<HTMLDivElement>(null)
-	useEffect(() => {
-		console.log('useEffect')
-		if (ref && updateRef) {
-			ref.current?.scrollIntoView()
-			setUpdateRef(false)
-		}
-	}, [conversations])
+	// const [value, setValue] = useState('')
+	// const ref = useRef<HTMLDivElement>(null)
+	// useEffect(() => {
+	// 	console.log('useEffect')
+	// 	if (ref && updateRef) {
+	// 		ref.current?.scrollIntoView()
+	// 		setUpdateRef(false)
+	// 	}
+	// }, [conversations])
 
 	return (
 		<>
@@ -230,7 +241,7 @@ export const ChatScreen: FC = observer(() => {
 						{isProfileSettings && !selectedChat && <ProfileSettings />}
 						{selectedChat && (
 							<Box className="flex flex-col pb-3 h-[100dvh] w-full">
-								{/* <ChatHeader
+								<ChatHeader
 									chat={selectedChat}
 									setChats={setChats}
 									setSelectedChat={setSelectedChat}
@@ -242,10 +253,7 @@ export const ChatScreen: FC = observer(() => {
 									}}
 								/>
 								<ChatFeed
-									conversation={getCurrentConversation(
-										conversations,
-										selectedChat,
-									)}
+									conversation={selectedConversation}
 									setConversations={setConversations}
 									selectedChat={selectedChat}
 									setUpdateRef={setUpdateRef}
@@ -255,25 +263,25 @@ export const ChatScreen: FC = observer(() => {
 									chat={selectedChat}
 									className="relative bottom-0"
 									setUpdateRef={setUpdateRef}
-								/> */}
-								<div
+								/>
+								{/* <div
 									style={{
 										display: 'flex',
 										flexDirection: 'column',
 										overflow: 'scroll',
 									}}
 								>
-									<div ref={ref} />
-									{getCurrentConversation(conversations, selectedChat)?.map(
-										(item) => (
+									{getCurrentConversation(conversations, selectedChat)
+										?.reverse()
+										.map((item) => (
 											<p
 												key={item.id}
 												style={{ color: 'white', fontSize: '2rem' }}
 											>
 												{item.content}
 											</p>
-										),
-									)}
+										))}
+									<div ref={ref} />
 								</div>
 								<form
 									onSubmit={(e) => {
@@ -297,7 +305,7 @@ export const ChatScreen: FC = observer(() => {
 									<button type="submit" style={{ color: 'white' }}>
 										add
 									</button>
-								</form>
+								</form> */}
 							</Box>
 						)}
 					</Box>
