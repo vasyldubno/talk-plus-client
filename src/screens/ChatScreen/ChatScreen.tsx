@@ -259,7 +259,7 @@ export const ChatScreen: FC = observer(() => {
 								<div
 									style={{
 										display: 'flex',
-										flexDirection: 'column-reverse',
+										flexDirection: 'column',
 										overflow: 'scroll',
 									}}
 								>
