@@ -49,29 +49,10 @@ export const ChatForm = forwardRef<HTMLDivElement, Props>(
 					afterSubmit: () => {
 						setValue('')
 						setUpdateRef(true)
-						// if (lastRef) {
-						// 	// @ts-ignore
-						// 	lastRef.current?.scrollIntoView({
-						// 		// behavior: 'smooth',
-						// 		block: 'start',
-						// 	})
-						// }
 					},
 				})
 			}
-			// if (isTouchScreen) {
-			// 	inputRef.current?.blur()
-			// } else {
-			// 	inputRef.current?.focus()
-			// }
 		}
-
-		// const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		// 	if (e.key === 'Enter') {
-		// 		e.preventDefault()
-		// 		handleClick()
-		// 	}
-		// }
 
 		const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()

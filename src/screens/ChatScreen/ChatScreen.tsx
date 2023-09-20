@@ -130,7 +130,8 @@ export const ChatScreen: FC = observer(() => {
 	// console.log('CONVERSATIONS', conversations)
 	// console.log('ONLINE_USERS', store.getOnlineUsers())
 	// console.log(lastMessageRef)
-	console.log('updateRef', updateRef)
+	// console.log('updateRef', updateRef)
+	const [value, setValue] = useState('')
 
 	return (
 		<>
@@ -204,6 +205,7 @@ export const ChatScreen: FC = observer(() => {
 							chatsLoaded={chatsLoaded}
 						/>
 					</Box>
+
 					<Box
 						className={clsx(
 							'w-full bg-[var(--color-dark-gray)]',
@@ -220,7 +222,7 @@ export const ChatScreen: FC = observer(() => {
 						{isProfileSettings && !selectedChat && <ProfileSettings />}
 						{selectedChat && (
 							<Box className="flex flex-col pb-3 h-[100dvh] w-full">
-								<ChatHeader
+								{/* <ChatHeader
 									chat={selectedChat}
 									setChats={setChats}
 									setSelectedChat={setSelectedChat}
@@ -241,13 +243,51 @@ export const ChatScreen: FC = observer(() => {
 									setUpdateRef={setUpdateRef}
 									updateRef={updateRef}
 								/>
-								{/* <div ref={lastMessageRef} /> */}
 								<ChatForm
 									chat={selectedChat}
-									// ref={lastMessageRef}
 									className="relative bottom-0"
 									setUpdateRef={setUpdateRef}
-								/>
+								/> */}
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'column-reverse',
+										overflow: 'scroll',
+									}}
+								>
+									{getCurrentConversation(conversations, selectedChat)?.map(
+										(item) => (
+											<p
+												key={item.id}
+												style={{ color: 'white', fontSize: '2rem' }}
+											>
+												{item.content}
+											</p>
+										),
+									)}
+								</div>
+								<form
+									onSubmit={(e) => {
+										e.preventDefault()
+										ChatService.addNewMessage({
+											content: value,
+											chatId: selectedChat.id,
+											userId: store.getUserId(),
+											afterSubmit: () => {
+												setValue('')
+											},
+										})
+									}}
+								>
+									<input
+										type="text"
+										value={value}
+										onChange={(e) => setValue(e.target.value)}
+									/>
+									<button type="submit" style={{ color: 'white' }}>
+										add
+									</button>
+								</form>
 							</Box>
 						)}
 					</Box>
