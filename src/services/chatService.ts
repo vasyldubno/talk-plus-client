@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { Dispatch, SetStateAction } from 'react'
-import { toast } from 'react-toastify'
 import { MESSAGE_PER_PAGE } from '@/config/consts'
 import { supabase } from '@/config/supabase'
-import { toastConfig } from '@/config/toastConfig'
 import { UserStore } from '@/store/userStore'
 import { IChat, IConversation, IMessage } from '@/types/types'
 
@@ -54,31 +52,36 @@ export class ChatService {
 						.order('created_at', { ascending: false })
 
 					if (messagesSupabase.data) {
-						const messagesPromise: Promise<IMessage>[] =
-							messagesSupabase.data.map(async (messageSupabase) => {
-								const author = await supabase
-									.from('users')
-									.select()
-									.eq('id', messageSupabase.author_id)
-									.single()
-
-								return {
-									id: messageSupabase.id,
-									author: {
-										firstName: author.data.firstName,
-										id: author.data.id,
-										avatar: author.data.avatar,
-									},
-									content: messageSupabase.content,
-									createdAt: messageSupabase.created_at,
-								}
-							})
-
-						const messages = await Promise.all(messagesPromise)
-						setConversations((prev) => [
-							...prev,
-							{ id: chatSupabase.id, title: chatSupabase.title, messages },
-						])
+						const authorIds = Array.from(
+							new Set(messagesSupabase.data.map((item) => item.author_id)),
+						)
+						const authors = await supabase
+							.from('users')
+							.select()
+							.in('id', authorIds)
+						if (authors.data) {
+							const messages: IMessage[] = messagesSupabase.data.map(
+								(messageSupabase) => {
+									const author = authors.data.find(
+										(item) => item.id === messageSupabase.author_id,
+									)
+									return {
+										id: messageSupabase.id,
+										author: {
+											firstName: author.firstName,
+											id: author.id,
+											avatar: author.avatar,
+										},
+										content: messageSupabase.content,
+										createdAt: messageSupabase.created_at,
+									}
+								},
+							)
+							setConversations((prev) => [
+								...prev,
+								{ id: chatSupabase.id, title: chatSupabase.title, messages },
+							])
+						}
 					}
 				},
 			)

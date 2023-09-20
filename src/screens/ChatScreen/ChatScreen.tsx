@@ -1,9 +1,7 @@
 import { Box } from '@chakra-ui/react'
-import axios, { all } from 'axios'
 import clsx from 'clsx'
 import { observer } from 'mobx-react-lite'
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
-import io from 'socket.io-client'
+import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { AddGroup } from '@/components/AddGroup/AddGroup'
 import { ChatFeed } from '@/components/ChatFeed/ChatFeed'
@@ -14,15 +12,11 @@ import { ChatMenu } from '@/components/ChatMenu/ChatMenu'
 import { ChatSearchInput } from '@/components/ChatSearchInput/ChatSearchInput'
 import { ChatUserList } from '@/components/ChatUserList/ChatUserList'
 import { ProfileSettings } from '@/components/ProfileSettings/ProfileSettings'
-import { UserChatItem } from '@/components/UserChatItem/UserChatItem'
-import { supabase } from '@/config/supabase'
-import { useDebounce } from '@/hooks/useDebounce'
 import { useMatchMedia } from '@/hooks/useMatchMedia'
 import { useStore } from '@/hooks/useStore'
 import { ChatService } from '@/services/chatService'
 import { SupabaseService } from '@/services/supabaseService'
-import { IChat, IConversation, IMessage, ISocket } from '@/types/types'
-import { Loader } from '@/ui/Loader/Loader'
+import { IChat, IConversation, IMessage } from '@/types/types'
 import { getCurrentConversation } from '@/utils/getCurrentConversation'
 
 export const ChatScreen: FC = observer(() => {
@@ -33,7 +27,6 @@ export const ChatScreen: FC = observer(() => {
 		IMessage[] | null
 	>(null)
 	const [searchValue, setSearchValue] = useState('')
-	const [users, setUsers] = useState<IChat[]>([])
 	const [isAddGroup, setIsAddGroup] = useState(false)
 	const [isProfileSettings, setIsProfileSettings] = useState(false)
 	const [chatsLoaded, setChatsLoaded] = useState(false)
@@ -43,17 +36,12 @@ export const ChatScreen: FC = observer(() => {
 
 	const md = useMatchMedia('(max-width: 1024px)')
 
-	const debouncedValue = useDebounce(searchValue)
-
 	const router = useRouter()
-
-	const chatFeedRef = useRef<HTMLDivElement>(null)
-	const lastMessageRef = useRef<HTMLDivElement>(null)
 
 	const store = useStore()
 	const isLogged = store.getIsLogged()
 	const isLoaded = store.getIsLoaded()
-	const isLoading = store.getIsLoading()
+
 	const username = store.getUsername()
 	const userId = store.getUserId()
 
@@ -92,20 +80,6 @@ export const ChatScreen: FC = observer(() => {
 			)
 		}
 	}, [isLoaded, isLogged, router, username, userId])
-
-	// useEffect(() => {
-	// 	if (debouncedValue.length >= 3) {
-	// 		console.log('')
-	// 	} else {
-	// 		setUsers([])
-	// 	}
-	// }, [debouncedValue])
-
-	// useEffect(() => {
-	// 	if (searchValue.length <= 2) {
-	// 		setUsers([])
-	// 	}
-	// }, [searchValue])
 
 	useEffect(() => {
 		if (md) {
