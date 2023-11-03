@@ -40,5 +40,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 Talk Plus is Real-Time Application that use [Next.JS](https://nextjs.org/) for fornt-end and [Supabase](https://supabase.com/) for back-end
 <img src="https://github.com/vasyldubno/talk-plus-client/blob/main/screenshot.png"/>
 
-## Deploy
-[Demo](https://talk-plus-client.vercel.app/)
+
